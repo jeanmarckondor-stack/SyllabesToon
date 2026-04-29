@@ -803,6 +803,130 @@ h1 {
   cursor: pointer;
 }
 
+.audio-check-shell {
+  min-height: 100vh;
+  padding: 28px;
+  background-image: var(--scene-bg);
+  background-size: cover;
+  background-position: center;
+}
+
+.audio-check-panel {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 28px;
+  border: 8px solid #ffffff;
+  border-radius: 34px;
+  background: rgba(255, 250, 242, 0.9);
+  box-shadow: 0 24px 60px rgba(37, 49, 79, 0.22);
+}
+
+.audio-check-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.back-link {
+  display: inline-grid;
+  place-items: center;
+  min-height: 52px;
+  padding: 0 18px;
+  border: 4px solid #ffffff;
+  border-radius: 999px;
+  color: #ffffff;
+  background: #25314f;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 7px 0 rgba(37, 49, 79, 0.18);
+}
+
+.audio-check-intro {
+  margin: 18px 0 22px;
+  padding: 16px 18px;
+  border: 4px solid #ffffff;
+  border-radius: 22px;
+  background: #fff8c7;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.audio-list {
+  display: grid;
+  gap: 12px;
+}
+
+.audio-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 4px solid rgba(37, 49, 79, 0.16);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.audio-syllable {
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  border-radius: 18px;
+  color: #ffffff;
+  background: linear-gradient(145deg, #ff8fd0, #7c4dff);
+  font-size: 30px;
+  text-shadow: 0 3px 0 rgba(37, 49, 79, 0.18);
+}
+
+.audio-paths {
+  margin: 0;
+  color: #4d5878;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.audio-status {
+  min-width: 150px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.audio-status.waiting {
+  background: #e8edf7;
+}
+
+.audio-status.testing {
+  background: #fff0a8;
+}
+
+.audio-status.ok {
+  color: #ffffff;
+  background: #23a96a;
+}
+
+.audio-status.missing {
+  color: #ffffff;
+  background: #ff6f91;
+}
+
+.audio-test-button {
+  min-height: 52px;
+  padding: 0 18px;
+  border: 4px solid #ffffff;
+  border-radius: 999px;
+  color: #25314f;
+  background: #ffd84d;
+  font: inherit;
+  font-weight: 900;
+  box-shadow: 0 7px 0 rgba(37, 49, 79, 0.15);
+  cursor: pointer;
+}
+
 #feedbackText {
   min-height: 62px;
   margin: 0;

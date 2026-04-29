@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SyllabesToon - vérification audio</title>
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body class="theme-candy">
+    <main class="audio-check-shell">
+      <section class="audio-check-panel">
+        <header class="audio-check-header">
+          <div>
+            <p class="kicker">SyllabesToon</p>
+            <h1>Vérification audio</h1>
+          </div>
+          <a class="back-link" href="index.html">Retour au jeu</a>
+        </header>
+
+        <p class="audio-check-intro">
+          Place les fichiers enregistrés dans <strong>assets/audio/syllables</strong>, puis teste chaque syllabe.
+        </p>
+
+        <section id="audioList" class="audio-list" aria-label="Liste des syllabes à tester"></section>
+      </section>
+    </main>
+
+    <script src="src/config.js"></script>
+    <script src="src/audio.js"></script>
+    <script src="src/audio-check.js"></script>
+  </body>
+</html>

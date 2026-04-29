@@ -36,3 +36,5 @@ Ouvrir simplement [index.html](index.html) dans un navigateur.
 La voix utilise provisoirement la synthese vocale du navigateur pour permettre un test immediat. Les futurs enregistrements humains seront places dans `assets/audio`.
 
 Les fichiers de syllabes enregistrees doivent etre places dans `assets/audio/syllables`, par exemple `ma.mp3`, `la.mp3`, `pi.mp3`.
+
+Pour tester les enregistrements sans lancer une partie, ouvrir [audio-check.html](audio-check.html).

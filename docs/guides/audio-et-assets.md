@@ -25,6 +25,16 @@ Formats acceptes par le prototype:
 
 Le jeu cherche d'abord un fichier audio humain. Si aucun fichier n'est trouve, il utilise provisoirement la voix du navigateur.
 
+## Verifier les fichiers audio
+
+Une page de verification est disponible:
+
+`audio-check.html`
+
+Elle liste toutes les syllabes declarees dans `src/config.js` et permet de tester les fichiers presents dans `assets/audio/syllables`.
+
+Si un fichier est trouve et lisible, la page indique `OK`. Sinon, elle indique que le fichier est absent ou illisible et rejoue provisoirement la syllabe avec la voix du navigateur.
+
 ## Conseils d'enregistrement
 
 - Enregistrer dans un endroit calme.
@@ -32,6 +42,8 @@ Le jeu cherche d'abord un fichier audio humain. Si aucun fichier n'est trouve, i
 - Dire seulement la syllabe, sans bruit avant ou apres.
 - Laisser un tres court silence au debut et a la fin.
 - Utiliser le meme volume pour toutes les syllabes.
+- Exporter de preference en `.mp3`.
+- Garder les noms en minuscules, sans espace ni accent.
 
 ## Ajouter une syllabe
 

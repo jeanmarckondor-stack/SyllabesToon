@@ -208,84 +208,15 @@ function animateMascot(mood) {
 }
 
 function playTargetSound() {
-  playRecordedSyllableOrSpeak(`${state.studentName}, trouve ${state.target}`, state.target);
-}
-
-function playRecordedSyllableOrSpeak(fallbackText, syllable) {
-  if (!config.audio.useRecordedVoiceFirst) {
-    speak(fallbackText);
-    return;
-  }
-
-  playFirstAvailableAudio(syllable).catch(() => speak(fallbackText));
-}
-
-function playFirstAvailableAudio(syllable) {
-  const candidates = config.audio.extensions.map((extension) => {
-    return `${config.audio.syllablePath}/${syllable}.${extension}`;
-  });
-
-  return tryAudioCandidates(candidates);
-}
-
-function tryAudioCandidates(candidates) {
-  const [candidate, ...remaining] = candidates;
-
-  if (!candidate) {
-    return Promise.reject(new Error("No recorded audio found"));
-  }
-
-  return playAudio(candidate).catch(() => tryAudioCandidates(remaining));
-}
-
-function playAudio(source) {
-  return new Promise((resolve, reject) => {
-    const audio = new Audio(source);
-    let settled = false;
-    const failTimer = window.setTimeout(() => {
-      if (!settled) {
-        settled = true;
-        reject(new Error(`Audio timeout: ${source}`));
-      }
-    }, 1200);
-
-    audio.addEventListener("error", () => {
-      if (!settled) {
-        settled = true;
-        window.clearTimeout(failTimer);
-        reject(new Error(`Audio error: ${source}`));
-      }
-    });
-
-    audio.play()
-      .then(() => {
-        if (!settled) {
-          settled = true;
-          window.clearTimeout(failTimer);
-          resolve();
-        }
-      })
-      .catch((error) => {
-        if (!settled) {
-          settled = true;
-          window.clearTimeout(failTimer);
-          reject(error);
-        }
-      });
+  window.SyllabesToonAudio.playRecordedOrSpeak({
+    syllable: state.target,
+    fallbackText: `${state.studentName}, trouve ${state.target}`,
+    config,
   });
 }
 
 function speak(text) {
-  if (!("speechSynthesis" in window)) {
-    return;
-  }
-
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "fr-FR";
-  utterance.rate = 0.82;
-  utterance.pitch = 1.12;
-  window.speechSynthesis.speak(utterance);
+  window.SyllabesToonAudio.speak(text);
 }
 
 function selectLevel(index) {
