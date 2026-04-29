@@ -33,6 +33,14 @@ const clearProgressButton = document.querySelector("#clearProgress");
 const progressPanel = document.querySelector("#progressPanel");
 const progressSummary = document.querySelector("#progressSummary");
 const progressDetails = document.querySelector("#progressDetails");
+const rewardOverlay = document.querySelector("#rewardOverlay");
+const rewardSticker = document.querySelector("#rewardSticker");
+const rewardSymbol = document.querySelector("#rewardSymbol");
+const rewardTitle = document.querySelector("#rewardTitle");
+const rewardMessage = document.querySelector("#rewardMessage");
+const closeRewardButton = document.querySelector("#closeReward");
+const continueRewardButton = document.querySelector("#continueReward");
+const rewardCollection = document.querySelector("#rewardCollection");
 let levelButtons = [];
 const styleButtons = Array.from(document.querySelectorAll(".style-button"));
 
@@ -140,10 +148,10 @@ function handleCardClick(button) {
     button.classList.add("found");
     state.found += 1;
     foundCount.textContent = state.found;
-    feedbackText.textContent = sample(config.encouragements);
+    feedbackText.textContent = getCorrectMessage();
     showRewardBadge();
     animateMascot("happy");
-    speak("Bravo");
+    speak(state.mistakes ? "Tu as trouvé" : "Bravo");
 
     if (state.found >= state.goal) {
       completeRound();
@@ -190,13 +198,30 @@ function maybeShowHint() {
 function completeRound() {
   state.completed = true;
   recordCompletedRound();
-  feedbackText.textContent = `${state.studentName}, ${sample(config.completionMessages).toLowerCase()}`;
+  feedbackText.textContent = `${state.studentName}, ${formatMessage(sample(config.completionMessages)).toLowerCase()}`;
   showRewardBadge();
+  showCelebrationReward();
   animateMascot("celebrate");
   nextRoundButton.disabled = false;
   board.classList.add("celebrate");
   speak("Bravo, tu as réussi");
   setTimeout(() => board.classList.remove("celebrate"), 1400);
+}
+
+function getCorrectMessage() {
+  if (!state.mistakes && state.found === 1) {
+    return formatMessage(sample(config.firstTryMessages || config.encouragements));
+  }
+
+  if (state.mistakes > 0) {
+    return formatMessage(sample(config.comebackMessages || config.encouragements));
+  }
+
+  return formatMessage(sample(config.encouragements));
+}
+
+function formatMessage(message) {
+  return message.replaceAll("{syllable}", state.target);
 }
 
 function recordCompletedRound() {
@@ -218,6 +243,54 @@ function showRewardBadge() {
   rewardBadge.classList.remove("show");
   window.requestAnimationFrame(() => {
     rewardBadge.classList.add("show");
+  });
+}
+
+function showCelebrationReward() {
+  const reward = sample(config.rewards);
+  const unlocked = {
+    id: reward.id,
+    name: reward.name,
+    symbol: reward.symbol,
+    className: reward.className,
+    studentName: state.studentName,
+    target: state.target,
+    levelIndex: state.levelIndex,
+  };
+
+  window.SyllabesToonStorage.addReward(unlocked);
+  renderRewardCollection();
+
+  rewardSticker.className = `reward-sticker ${reward.className}`;
+  rewardSymbol.textContent = reward.symbol;
+  rewardTitle.textContent = reward.name;
+  rewardMessage.textContent = buildRewardMessage();
+  rewardOverlay.classList.remove("hidden");
+  window.SyllabesToonAudio.playRewardTone(reward.tone);
+}
+
+function buildRewardMessage() {
+  if (!state.mistakes) {
+    return `${state.studentName}, tu as gagné une surprise grâce à ton écoute.`;
+  }
+
+  return `${state.studentName}, tu as continué jusqu'à la réussite.`;
+}
+
+function closeRewardOverlay() {
+  rewardOverlay.classList.add("hidden");
+}
+
+function renderRewardCollection() {
+  const rewards = window.SyllabesToonStorage.loadRewards().slice(-5);
+  rewardCollection.innerHTML = "";
+
+  rewards.forEach((reward) => {
+    const item = document.createElement("span");
+    item.className = `collection-sticker ${reward.className}`;
+    item.textContent = reward.symbol;
+    item.title = reward.name;
+    rewardCollection.appendChild(item);
   });
 }
 
@@ -400,6 +473,7 @@ function clearProgress() {
   }
 
   window.SyllabesToonStorage.clearRecords();
+  renderRewardCollection();
   renderProgressPanel();
 }
 
@@ -418,6 +492,8 @@ startGameButton.addEventListener("click", startGame);
 openProgressButton.addEventListener("click", openProgressPanel);
 closeProgressButton.addEventListener("click", closeProgressPanel);
 clearProgressButton.addEventListener("click", clearProgress);
+closeRewardButton.addEventListener("click", closeRewardOverlay);
+continueRewardButton.addEventListener("click", closeRewardOverlay);
 studentNameInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     startGame();
@@ -425,4 +501,5 @@ studentNameInput.addEventListener("keydown", (event) => {
 });
 
 renderLevelButtons();
+renderRewardCollection();
 studentNameInput.focus();

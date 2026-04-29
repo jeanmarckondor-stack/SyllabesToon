@@ -98,10 +98,48 @@ window.SyllabesToonAudio = (() => {
     window.speechSynthesis.speak(utterance);
   }
 
+  function playRewardTone(kind = "sparkle") {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) {
+      return;
+    }
+
+    const context = new AudioContextClass();
+    const now = context.currentTime;
+    const patterns = {
+      sparkle: [523.25, 659.25, 783.99, 1046.5],
+      fanfare: [392, 523.25, 659.25, 783.99],
+      bubble: [440, 554.37, 493.88, 659.25],
+      soft: [329.63, 392, 493.88],
+    };
+    const notes = patterns[kind] || patterns.sparkle;
+
+    notes.forEach((frequency, index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      const start = now + index * 0.11;
+      const duration = 0.16;
+
+      oscillator.type = index % 2 === 0 ? "sine" : "triangle";
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.08, start + 0.018);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(start);
+      oscillator.stop(start + duration + 0.02);
+    });
+
+    window.setTimeout(() => context.close(), 900);
+  }
+
   return {
     buildCandidates,
     playFirstAvailableAudio,
     playRecordedOrSpeak,
+    playRewardTone,
     speak,
   };
 })();

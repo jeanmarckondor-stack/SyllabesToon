@@ -66,6 +66,7 @@ Fichiers utilises:
 - `manga-energy-bg.png`: univers Manga.
 - `mascot.png`: mascotte principale.
 - `student-sign.png`: pancarte tenue par la mascotte, sans texte.
+- `reward-capsule.png`: capsule surprise de recompense.
 
 Pour remplacer un univers, le plus simple est de retravailler l'image dans un logiciel externe, puis de sauvegarder le nouveau fichier avec le meme nom. L'application chargera automatiquement la nouvelle version.
 

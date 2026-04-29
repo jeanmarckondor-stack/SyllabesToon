@@ -1,5 +1,6 @@
 window.SyllabesToonStorage = (() => {
   const STORAGE_KEY = "syllabestoon.sessions.v1";
+  const REWARDS_KEY = "syllabestoon.rewards.v1";
   const MAX_RECORDS = 250;
 
   function loadRecords() {
@@ -26,6 +27,25 @@ window.SyllabesToonStorage = (() => {
 
   function clearRecords() {
     window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem(REWARDS_KEY);
+  }
+
+  function loadRewards() {
+    try {
+      const raw = window.localStorage.getItem(REWARDS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function addReward(reward) {
+    const rewards = loadRewards();
+    rewards.push({
+      ...reward,
+      unlockedAt: new Date().toISOString(),
+    });
+    window.localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards.slice(-40)));
   }
 
   function summarize(records = loadRecords()) {
@@ -66,8 +86,10 @@ window.SyllabesToonStorage = (() => {
 
   return {
     addRecord,
+    addReward,
     clearRecords,
     loadRecords,
+    loadRewards,
     summarize,
   };
 })();

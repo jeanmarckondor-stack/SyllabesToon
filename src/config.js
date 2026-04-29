@@ -194,6 +194,14 @@ window.SYLLABESTOON_CONFIG = {
     "Excellent, tes yeux ont trouvé.",
     "Youpi, c'est la bonne syllabe.",
     "Magnifique, continue.",
+    "Tu as repéré {syllable} avec attention.",
+    "Ton écoute t'a bien aidé.",
+    "Tu as pris le temps de regarder.",
+    "Belle recherche, tu avances bien.",
+    "Tes yeux et tes oreilles travaillent ensemble.",
+    "Tu as gardé ton idée jusqu'au bout.",
+    "C'est une réponse très précise.",
+    "Tu progresses avec calme.",
   ],
 
   gentleHelps: [
@@ -204,6 +212,13 @@ window.SYLLABESTOON_CONFIG = {
     "Tu peux prendre ton temps.",
     "Je te la redis, puis on cherche.",
     "On avance tranquillement.",
+    "La bonne syllabe est encore dans le nuage.",
+    "Regarde une carte après l'autre.",
+    "Tu n'as pas perdu, tu cherches encore.",
+    "On respire, puis on réécoute.",
+    "Essaie de retrouver les mêmes lettres.",
+    "Ton cerveau est en train d'apprendre.",
+    "Je reste avec toi, on continue.",
   ],
 
   completionMessages: [
@@ -212,7 +227,35 @@ window.SYLLABESTOON_CONFIG = {
     "Très beau travail.",
     "Formidable, tu as terminé.",
     "Quelle belle réussite.",
+    "Tu as écouté jusqu'au bout.",
+    "Tu peux être fier de toi.",
+    "Tu as gagné une surprise.",
   ],
 
   rewardBadges: ["Super !", "Youpi !", "Top !", "Waouh !", "Génial !", "Encore !"],
+
+  firstTryMessages: [
+    "Trouvé du premier coup.",
+    "Quelle écoute rapide.",
+    "Tu as reconnu {syllable} tout de suite.",
+    "Réponse éclair et bien choisie.",
+  ],
+
+  comebackMessages: [
+    "Tu as continué, et tu as trouvé.",
+    "Belle persévérance.",
+    "Tu as essayé encore, c'est exactement comme ça qu'on apprend.",
+    "Tu as transformé l'essai en réussite.",
+  ],
+
+  rewards: [
+    { id: "star", name: "Étoile brillante", symbol: "★", tone: "sparkle", className: "reward-star" },
+    { id: "gem", name: "Gemme magique", symbol: "◆", tone: "sparkle", className: "reward-gem" },
+    { id: "rocket", name: "Fusée sourire", symbol: "▲", tone: "fanfare", className: "reward-rocket" },
+    { id: "bubble", name: "Bulle arc-en-ciel", symbol: "●", tone: "bubble", className: "reward-bubble" },
+    { id: "crown", name: "Couronne douce", symbol: "♛", tone: "fanfare", className: "reward-crown" },
+    { id: "moon", name: "Lune câline", symbol: "◐", tone: "soft", className: "reward-moon" },
+    { id: "comet", name: "Comète joyeuse", symbol: "✦", tone: "sparkle", className: "reward-comet" },
+    { id: "medal", name: "Médaille d'écoute", symbol: "●", tone: "soft", className: "reward-medal" },
+  ],
 };
