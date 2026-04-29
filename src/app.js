@@ -343,10 +343,16 @@ function showCelebrationReward() {
   rewardTitle.textContent = reward.name;
   rewardMessage.textContent = buildRewardMessage(reward);
   rewardOverlay.classList.remove("hidden");
-  window.SyllabesToonAudio.playRewardTone(reward.tone);
+  if (reward.tone) {
+    window.SyllabesToonAudio.playRewardTone(reward.tone);
+  }
 }
 
 function buildRewardAnimation(reward) {
+  if (reward.video) {
+    return [createRewardVideo(reward)];
+  }
+
   if (reward.id === "rainbowWave") {
     return Array.from({ length: 6 }, (_, index) => {
       const band = document.createElement("span");
@@ -369,6 +375,24 @@ function buildRewardAnimation(reward) {
   });
 }
 
+function createRewardVideo(reward) {
+  const video = document.createElement("video");
+  video.className = "reward-video";
+  video.src = reward.video;
+  video.autoplay = true;
+  video.controls = false;
+  video.loop = Boolean(reward.loop);
+  video.playsInline = true;
+  video.preload = "auto";
+  video.setAttribute("aria-label", reward.name);
+  video.addEventListener("canplay", () => {
+    video.play().catch(() => {
+      video.controls = true;
+    });
+  }, { once: true });
+  return video;
+}
+
 function buildRewardMessage(reward) {
   if (!state.mistakes) {
     return `${state.studentName}, ${reward.message}`;
@@ -378,6 +402,7 @@ function buildRewardMessage(reward) {
 }
 
 function closeRewardOverlay() {
+  rewardAnimation.innerHTML = "";
   rewardOverlay.classList.add("hidden");
 }
 

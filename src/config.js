@@ -305,6 +305,15 @@ window.SYLLABESTOON_CONFIG = {
 
   rewardShows: [
     {
+      id: "videoRecomp1",
+      name: "La video surprise",
+      message: "Une petite video se lance pour feter ta reussite.",
+      className: "show-video-reward",
+      video: "assets/videos/rewards/recomp1.mp4",
+      loop: false,
+      props: [],
+    },
+    {
       id: "starDance",
       name: "La danse des etoiles",
       message: "Les etoiles dansent pour ton ecoute.",

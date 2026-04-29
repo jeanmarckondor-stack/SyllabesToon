@@ -54,10 +54,18 @@ Chaque element de `props` peut etre:
 - un element dessine en CSS avec `label` et `className`;
 - un asset image avec `asset` et `className`.
 
+Une recompense peut aussi utiliser une video MP4 avec:
+
+- `video`: chemin du fichier MP4;
+- `loop`: `true` ou `false`.
+
+Les videos de recompense sont rangees dans `assets/videos/rewards`.
+
 Les sons sont generes localement par `src/audio.js`. Aucun fichier son de recompense n'est necessaire pour cette premiere version.
 
 Mini-scenes actuelles:
 
+- video surprise MP4;
 - danse des etoiles;
 - fusee de la reussite;
 - fete des bulles;
