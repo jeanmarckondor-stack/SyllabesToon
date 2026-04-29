@@ -4,7 +4,7 @@ const levels = config.levels;
 
 const state = {
   levelIndex: 0,
-  target: "ma",
+  target: "",
   found: 0,
   goal: 1,
   completed: false,
@@ -47,11 +47,30 @@ let levelButtons = [];
 const styleButtons = Array.from(document.querySelectorAll(".style-button"));
 
 function sample(list) {
-  return list[Math.floor(Math.random() * list.length)];
+  return list[randomInt(list.length)];
 }
 
 function shuffle(list) {
-  return [...list].sort(() => Math.random() - 0.5);
+  const shuffled = [...list];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = randomInt(index + 1);
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
+function randomInt(max) {
+  if (max <= 0) {
+    return 0;
+  }
+
+  if (window.crypto?.getRandomValues) {
+    const values = new Uint32Array(1);
+    window.crypto.getRandomValues(values);
+    return values[0] % max;
+  }
+
+  return Math.floor(Math.random() * max);
 }
 
 function pickDistractors(target, count, mode) {
@@ -179,14 +198,14 @@ function getAvoidCount(poolSize) {
   }
 
   if (poolSize <= 6) {
-    return 2;
-  }
-
-  if (poolSize <= 12) {
     return 3;
   }
 
-  return 5;
+  if (poolSize <= 12) {
+    return 4;
+  }
+
+  return 6;
 }
 
 function renderBoard(cards, level) {

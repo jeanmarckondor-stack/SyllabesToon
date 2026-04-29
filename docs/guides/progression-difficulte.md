@@ -66,10 +66,11 @@ Le jeu evite de redemander trop souvent la meme syllabe.
 
 Pour chaque niveau:
 
-- le `targetPool` est melange;
+- le `targetPool` est melange avec un vrai tirage de type Fisher-Yates;
 - les syllabes sont parcourues avant d'etre remelangees;
 - les dernieres syllabes demandees sont temporairement evitees;
 - plus le pool est grand, plus l'historique d'evitement est long.
+- les premiers niveaux utilisent maintenant un pool assez large pour eviter un demarrage trop systematique sur les memes syllabes.
 
 Cela permet de garder une grande variete tout en conservant une part d'aleatoire.
 
