@@ -55,3 +55,14 @@ Pour ajouter un niveau, copier un bloc existant puis ajuster:
 - `hintAfterMistakes`.
 
 Les boutons de niveaux sont generes automatiquement: il n'est pas necessaire de modifier `index.html` pour ajouter un niveau.
+
+## Stabilisation de l'expérience enfant
+
+Les niveaux doivent rester confortables visuellement:
+
+- les premiers niveaux utilisent une grille plus aeree;
+- les niveaux denses utilisent davantage de colonnes pour eviter un nuage trop vertical;
+- les cartes conservent une taille minimale pour rester faciles a cliquer;
+- le nom du niveau reste visible pour l'adulte accompagnant;
+- un indice visuel doux peut apparaitre apres plusieurs erreurs;
+- les animations respectent le reglage systeme de reduction des mouvements.

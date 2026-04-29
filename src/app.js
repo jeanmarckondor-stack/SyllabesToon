@@ -9,6 +9,7 @@ const state = {
   goal: 1,
   completed: false,
   studentName: "toi",
+  started: false,
 };
 
 const board = document.querySelector("#cloudBoard");
@@ -25,6 +26,7 @@ const startOverlay = document.querySelector("#startOverlay");
 const studentNameInput = document.querySelector("#studentName");
 const startGameButton = document.querySelector("#startGame");
 const levelPicker = document.querySelector("#levelPicker");
+const levelName = document.querySelector("#levelName");
 let levelButtons = [];
 const styleButtons = Array.from(document.querySelectorAll(".style-button"));
 
@@ -103,7 +105,7 @@ function createRound() {
 
 function renderBoard(cards, level) {
   board.innerHTML = "";
-  board.className = `cloud-board ${level.density || "comfortable"}`;
+  board.className = `cloud-board ${level.density || "comfortable"} count-${cards.length}`;
 
   cards.forEach((card, index) => {
     const button = document.createElement("button");
@@ -288,10 +290,18 @@ function speak(text) {
 
 function selectLevel(index) {
   state.levelIndex = index;
+  updateLevelDisplay();
   levelButtons.forEach((button, buttonIndex) => {
     button.classList.toggle("active", buttonIndex === index);
   });
-  createRound();
+  if (state.started) {
+    createRound();
+  }
+}
+
+function updateLevelDisplay() {
+  const level = levels[state.levelIndex];
+  levelName.textContent = `Niveau ${state.levelIndex + 1} - ${level.name}`;
 }
 
 function renderLevelButtons() {
@@ -310,6 +320,7 @@ function renderLevelButtons() {
   });
 
   levelButtons[0]?.classList.add("active");
+  updateLevelDisplay();
 }
 
 styleButtons.forEach((button) => {
@@ -327,6 +338,7 @@ function selectTheme(theme) {
 function startGame() {
   const name = studentNameInput.value.trim();
   state.studentName = name || "toi";
+  state.started = true;
   studentSignName.textContent = state.studentName;
   startOverlay.classList.add("hidden");
   createRound();
