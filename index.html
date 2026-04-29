@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SyllabesToon</title>
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body class="theme-candy">
+    <main class="app-shell">
+      <section class="game-stage" aria-label="Jeu Nuage des Syllabes">
+        <div class="sky-decoration" aria-hidden="true">
+          <span class="burst burst-a"></span>
+          <span class="burst burst-b"></span>
+          <span class="sun"></span>
+          <span class="cloud cloud-a"></span>
+          <span class="cloud cloud-b"></span>
+          <span class="rainbow"></span>
+          <span class="hill hill-a"></span>
+          <span class="hill hill-b"></span>
+        </div>
+
+        <header class="top-bar">
+          <div>
+            <p class="kicker">SyllabesToon</p>
+            <h1>Le nuage des syllabes</h1>
+          </div>
+          <div class="toolbar">
+            <div class="style-picker" aria-label="Choisir le style visuel">
+              <button class="style-button active" type="button" data-theme="theme-candy">Candy</button>
+              <button class="style-button" type="button" data-theme="theme-toon">Toon</button>
+              <button class="style-button" type="button" data-theme="theme-manga">Manga</button>
+            </div>
+            <div id="levelPicker" class="level-picker" aria-label="Choisir un niveau"></div>
+          </div>
+        </header>
+
+        <section class="prompt-panel" aria-live="polite">
+          <div class="mascot-wrap" aria-hidden="true">
+            <img class="mascot" src="assets/images/mascot.png" alt="">
+            <div class="student-sign">
+              <img class="student-sign-art" src="assets/images/student-sign.png" alt="">
+              <div class="student-sign-text">
+                <span>Pour</span>
+                <strong id="studentSignName">toi</strong>
+              </div>
+            </div>
+          </div>
+          <div class="target-card">
+            <span class="target-label">Trouve</span>
+            <strong id="targetSyllable">ma</strong>
+          </div>
+          <button id="playSound" class="sound-button" type="button" aria-label="Rejouer la syllabe">
+            <span class="sound-icon" aria-hidden="true">▶</span>
+            <span>Écouter</span>
+          </button>
+        </section>
+
+        <section id="cloudBoard" class="cloud-board" aria-label="Nuage de syllabes"></section>
+
+        <footer class="status-bar">
+          <p id="feedbackText">Écoute bien, puis clique sur la bonne syllabe.</p>
+          <div id="rewardBadge" class="reward-badge" aria-hidden="true">Super !</div>
+          <div class="progress" aria-label="Progression">
+            <span id="foundCount">0</span>
+            <span>/</span>
+            <span id="goalCount">1</span>
+          </div>
+          <button id="nextRound" class="next-button" type="button">Nouvelle bulle</button>
+        </footer>
+
+        <section id="startOverlay" class="start-overlay" aria-label="Démarrer la séance">
+          <div class="start-panel">
+            <img class="start-mascot" src="assets/images/mascot.png" alt="" aria-hidden="true">
+            <div class="start-content">
+              <p class="kicker">Bienvenue</p>
+              <h2>Qui joue aujourd'hui ?</h2>
+              <label for="studentName">Prénom de l'élève</label>
+              <input id="studentName" type="text" autocomplete="off" maxlength="24" placeholder="Prénom">
+              <button id="startGame" class="start-button" type="button">Commencer</button>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="src/config.js"></script>
+    <script src="src/app.js"></script>
+  </body>
+</html>

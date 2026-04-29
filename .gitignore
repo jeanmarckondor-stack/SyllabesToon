@@ -1,0 +1,17 @@
+# System files
+Thumbs.db
+Desktop.ini
+
+# Editor/project metadata
+.idea/
+.vscode/
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Future dependency folders
+node_modules/
+dist/
+build/
