@@ -718,34 +718,6 @@ h1 {
   animation: badge-pop 900ms ease both;
 }
 
-.reward-collection {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  min-width: 130px;
-  min-height: 72px;
-  padding: 8px;
-  border: 5px solid #ffffff;
-  border-radius: 24px;
-  background: rgba(255, 250, 242, 0.84);
-  box-shadow: 0 9px 0 rgba(37, 49, 79, 0.1);
-}
-
-.collection-sticker {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 3px solid #ffffff;
-  border-radius: 50%;
-  color: #ffffff;
-  font-size: 19px;
-  font-weight: 900;
-  text-shadow: 0 2px 0 rgba(37, 49, 79, 0.22);
-  box-shadow: 0 5px 0 rgba(37, 49, 79, 0.12);
-}
-
 .reward-overlay.hidden {
   display: none;
 }
@@ -793,20 +765,37 @@ h1 {
   animation: reward-capsule-bob 2s ease-in-out infinite;
 }
 
-.reward-sticker {
+.reward-animation {
+  position: relative;
+  width: min(460px, 82vw);
+  height: 190px;
+  margin-top: -58px;
+  overflow: hidden;
+  border: 6px solid #ffffff;
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.82), rgba(255, 216, 77, 0.25) 45%, rgba(124, 77, 255, 0.18) 100%);
+  box-shadow: 0 13px 0 rgba(37, 49, 79, 0.16), inset 0 0 34px rgba(255, 255, 255, 0.7);
+}
+
+.reward-show-item,
+.rainbow-band {
+  position: absolute;
+}
+
+.reward-show-item {
   display: grid;
   place-items: center;
-  width: 142px;
-  height: 142px;
-  margin-top: -62px;
-  border: 8px solid #ffffff;
-  border-radius: 44% 56% 48% 52%;
+  width: 58px;
+  height: 58px;
+  border: 5px solid #ffffff;
+  border-radius: 50%;
   color: #ffffff;
-  font-size: 70px;
+  background: linear-gradient(145deg, #ff8fd0, #7c4dff);
+  font-size: 32px;
   font-weight: 900;
-  text-shadow: 0 5px 0 rgba(37, 49, 79, 0.22);
-  box-shadow: 0 13px 0 rgba(37, 49, 79, 0.18), 0 0 0 12px rgba(255, 216, 77, 0.26);
-  animation: sticker-arrive 760ms ease both 180ms;
+  text-shadow: 0 3px 0 rgba(37, 49, 79, 0.24);
+  box-shadow: 0 8px 0 rgba(37, 49, 79, 0.16);
 }
 
 .reward-title {
@@ -832,25 +821,58 @@ h1 {
   min-width: 190px;
 }
 
-.reward-star,
-.reward-medal {
-  background: linear-gradient(145deg, #fff36d, #ffb331 56%, #ff6f91);
+.show-star-dance .reward-show-item {
+  animation: star-dance 1.45s ease-in-out infinite;
 }
 
-.reward-gem,
-.reward-bubble {
-  background: linear-gradient(145deg, #66fff0, #2f8cff 56%, #7c4dff);
+.show-rocket-launch .reward-show-item {
+  border-radius: 38% 38% 50% 50%;
+  animation: rocket-launch 1.65s ease-in-out infinite;
 }
 
-.reward-rocket,
-.reward-comet {
-  background: linear-gradient(145deg, #ff8fd0, #ff2f83 56%, #7c4dff);
+.show-bubble-party .reward-show-item {
+  background: linear-gradient(145deg, rgba(109, 255, 240, 0.85), rgba(47, 140, 255, 0.75));
+  animation: bubble-rise 2.1s ease-in-out infinite;
 }
 
-.reward-crown,
-.reward-moon {
-  background: linear-gradient(145deg, #ffe88a, #9b7cff 58%, #25314f);
+.show-confetti-pop .reward-show-item {
+  border-radius: 14px;
+  animation: confetti-pop 1.15s ease-in-out infinite;
 }
+
+.show-moon-cloud .reward-show-item {
+  background: linear-gradient(145deg, #ffffff, #9b7cff);
+  animation: cloud-float 2.4s ease-in-out infinite;
+}
+
+.show-magic-portal .reward-show-item,
+.show-toon-spotlight .reward-show-item {
+  animation: portal-spin 1.8s linear infinite;
+}
+
+.show-rainbow-wave .rainbow-band {
+  left: -20%;
+  width: 140%;
+  height: 22px;
+  border-radius: 999px;
+  animation: rainbow-wave 1.6s ease-in-out infinite;
+}
+
+.band-1 { top: 28px; background: #ff4b93; }
+.band-2 { top: 52px; background: #ff9c44; }
+.band-3 { top: 76px; background: #ffd84d; }
+.band-4 { top: 100px; background: #66d982; }
+.band-5 { top: 124px; background: #62c8ff; }
+.band-6 { top: 148px; background: #9b7cff; }
+
+.item-1 { left: 8%; top: 24%; animation-delay: 0ms !important; }
+.item-2 { left: 24%; top: 52%; animation-delay: 90ms !important; }
+.item-3 { left: 42%; top: 16%; animation-delay: 180ms !important; }
+.item-4 { left: 60%; top: 48%; animation-delay: 270ms !important; }
+.item-5 { left: 78%; top: 22%; animation-delay: 360ms !important; }
+.item-6 { left: 12%; top: 68%; animation-delay: 450ms !important; }
+.item-7 { left: 50%; top: 66%; animation-delay: 540ms !important; }
+.item-8 { left: 84%; top: 64%; animation-delay: 630ms !important; }
 
 .start-overlay {
   position: absolute;
@@ -1388,6 +1410,84 @@ h1 {
   }
 }
 
+@keyframes star-dance {
+  0%, 100% {
+    transform: translateY(0) rotate(-8deg) scale(1);
+  }
+  45% {
+    transform: translateY(-28px) rotate(18deg) scale(1.18);
+  }
+}
+
+@keyframes rocket-launch {
+  0% {
+    transform: translateY(76px) rotate(-8deg) scale(0.86);
+    opacity: 0.2;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-112px) rotate(10deg) scale(1.14);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(86px) scale(0.7);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-110px) scale(1.22);
+    opacity: 0;
+  }
+}
+
+@keyframes confetti-pop {
+  0% {
+    transform: translate(0, 42px) rotate(0deg) scale(0.2);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(16px, -62px) rotate(220deg) scale(1.04);
+    opacity: 0;
+  }
+}
+
+@keyframes cloud-float {
+  0%, 100% {
+    transform: translateX(-8px) translateY(5px) scale(1);
+  }
+  50% {
+    transform: translateX(12px) translateY(-16px) scale(1.1);
+  }
+}
+
+@keyframes portal-spin {
+  0% {
+    transform: rotate(0deg) translateX(18px) rotate(0deg) scale(0.96);
+  }
+  100% {
+    transform: rotate(360deg) translateX(18px) rotate(-360deg) scale(1.06);
+  }
+}
+
+@keyframes rainbow-wave {
+  0%, 100% {
+    transform: translateX(-8%) rotate(-2deg);
+  }
+  50% {
+    transform: translateX(8%) rotate(2deg);
+  }
+}
+
 @media (max-width: 820px) {
   .app-shell {
     padding: 12px;
@@ -1462,8 +1562,7 @@ h1 {
 
   .progress,
   .next-button,
-  .reward-badge,
-  .reward-collection {
+  .reward-badge {
     width: 100%;
   }
 
@@ -1475,10 +1574,15 @@ h1 {
     width: 210px;
   }
 
-  .reward-sticker {
-    width: 118px;
-    height: 118px;
-    font-size: 56px;
+  .reward-animation {
+    height: 156px;
+    margin-top: -42px;
+  }
+
+  .reward-show-item {
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
   }
 
   .progress-summary,

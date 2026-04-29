@@ -36,13 +36,11 @@ const progressPanel = document.querySelector("#progressPanel");
 const progressSummary = document.querySelector("#progressSummary");
 const progressDetails = document.querySelector("#progressDetails");
 const rewardOverlay = document.querySelector("#rewardOverlay");
-const rewardSticker = document.querySelector("#rewardSticker");
-const rewardSymbol = document.querySelector("#rewardSymbol");
+const rewardAnimation = document.querySelector("#rewardAnimation");
 const rewardTitle = document.querySelector("#rewardTitle");
 const rewardMessage = document.querySelector("#rewardMessage");
 const closeRewardButton = document.querySelector("#closeReward");
 const continueRewardButton = document.querySelector("#continueReward");
-const rewardCollection = document.querySelector("#rewardCollection");
 let levelButtons = [];
 const styleButtons = Array.from(document.querySelectorAll(".style-button"));
 
@@ -338,51 +336,43 @@ function showRewardBadge() {
 }
 
 function showCelebrationReward() {
-  const reward = sample(config.rewards);
-  const unlocked = {
-    id: reward.id,
-    name: reward.name,
-    symbol: reward.symbol,
-    className: reward.className,
-    studentName: state.studentName,
-    target: state.target,
-    levelIndex: state.levelIndex,
-  };
-
-  window.SyllabesToonStorage.addReward(unlocked);
-  renderRewardCollection();
-
-  rewardSticker.className = `reward-sticker ${reward.className}`;
-  rewardSymbol.textContent = reward.symbol;
+  const reward = sample(config.rewardShows);
+  rewardAnimation.className = `reward-animation ${reward.className}`;
+  rewardAnimation.innerHTML = "";
+  buildRewardAnimation(reward).forEach((element) => rewardAnimation.appendChild(element));
   rewardTitle.textContent = reward.name;
-  rewardMessage.textContent = buildRewardMessage();
+  rewardMessage.textContent = buildRewardMessage(reward);
   rewardOverlay.classList.remove("hidden");
   window.SyllabesToonAudio.playRewardTone(reward.tone);
 }
 
-function buildRewardMessage() {
-  if (!state.mistakes) {
-    return `${state.studentName}, tu as gagné une surprise grâce à ton écoute.`;
+function buildRewardAnimation(reward) {
+  if (reward.id === "rainbowWave") {
+    return Array.from({ length: 6 }, (_, index) => {
+      const band = document.createElement("span");
+      band.className = `rainbow-band band-${index + 1}`;
+      return band;
+    });
   }
 
-  return `${state.studentName}, tu as continué jusqu'à la réussite.`;
+  return reward.symbols.map((symbol, index) => {
+    const item = document.createElement("span");
+    item.className = `reward-show-item item-${index + 1}`;
+    item.textContent = symbol;
+    return item;
+  });
+}
+
+function buildRewardMessage(reward) {
+  if (!state.mistakes) {
+    return `${state.studentName}, ${reward.message}`;
+  }
+
+  return `${state.studentName}, tu as continué jusqu'à la réussite. ${reward.message}`;
 }
 
 function closeRewardOverlay() {
   rewardOverlay.classList.add("hidden");
-}
-
-function renderRewardCollection() {
-  const rewards = window.SyllabesToonStorage.loadRewards().slice(-5);
-  rewardCollection.innerHTML = "";
-
-  rewards.forEach((reward) => {
-    const item = document.createElement("span");
-    item.className = `collection-sticker ${reward.className}`;
-    item.textContent = reward.symbol;
-    item.title = reward.name;
-    rewardCollection.appendChild(item);
-  });
 }
 
 function animateMascot(mood) {
@@ -564,7 +554,6 @@ function clearProgress() {
   }
 
   window.SyllabesToonStorage.clearRecords();
-  renderRewardCollection();
   renderProgressPanel();
 }
 
@@ -592,5 +581,4 @@ studentNameInput.addEventListener("keydown", (event) => {
 });
 
 renderLevelButtons();
-renderRewardCollection();
 studentNameInput.focus();

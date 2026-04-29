@@ -15,10 +15,10 @@ L'objectif des recompenses est de donner de l'energie a l'enfant sans transforme
 Quand toutes les syllabes cibles sont trouvees:
 
 - une capsule surprise apparait;
-- un sticker virtuel est gagne;
+- une mini-scene animee se joue au centre de l'ecran;
 - un son court est joue;
 - la mascotte celebre;
-- la collection des derniers stickers est mise a jour.
+- la recompense disparait ensuite sans etre capitalisee dans un coin de l'ecran.
 
 Le fichier image principal est:
 
@@ -34,24 +34,36 @@ Les messages sont definis dans `src/config.js`:
 - `gentleHelps`: aide douce apres une mauvaise reponse;
 - `completionMessages`: fin de manche.
 
-## Types de stickers
+## Types de mini-scenes
 
-Les stickers sont definis dans `src/config.js`, dans `rewards`.
+Les recompenses sont definies dans `src/config.js`, dans `rewardShows`.
 
-Chaque reward contient:
+Chaque mini-scene contient:
 
 - `id`;
 - `name`;
-- `symbol`;
+- `message`;
 - `tone`;
 - `className`.
+- `symbols`.
 
 Les sons sont generes localement par `src/audio.js`. Aucun fichier son de recompense n'est necessaire pour cette premiere version.
+
+Mini-scenes actuelles:
+
+- danse des etoiles;
+- fusee de la reussite;
+- fete des bulles;
+- vague arc-en-ciel;
+- projecteur toon;
+- pop de confettis;
+- nuage calin;
+- portail magique.
 
 ## Pistes futures
 
 - Ajouter de vrais sons enregistres ou musicaux.
-- Remplacer les stickers CSS par de vrais assets illustres.
+- Ajouter de courtes videos ou animations exportees.
+- Remplacer certaines mini-scenes CSS par de vrais assets illustres.
 - Adapter les recompenses selon l'univers Candy, Toon ou Manga.
-- Ajouter une collection plus visible en fin de seance.
 - Debloquer une petite animation speciale apres plusieurs manches reussies.
