@@ -30,6 +30,7 @@
               <button class="style-button active" type="button" data-theme="theme-candy">Candy</button>
               <button class="style-button" type="button" data-theme="theme-toon">Toon</button>
               <button class="style-button" type="button" data-theme="theme-manga">Manga</button>
+              <button id="openProgress" class="style-button" type="button">Suivi</button>
             </div>
             <div id="levelPicker" class="level-picker" aria-label="Choisir un niveau"></div>
             <p id="levelName" class="level-name">Niveau 1 - Découverte</p>
@@ -82,11 +83,27 @@
             </div>
           </div>
         </section>
+
+        <aside id="progressPanel" class="progress-panel hidden" aria-label="Suivi local des séances">
+          <div class="progress-card">
+            <header class="progress-header">
+              <div>
+                <p class="kicker">Suivi local</p>
+                <h2>Dernières séances</h2>
+              </div>
+              <button id="closeProgress" class="panel-icon-button" type="button" aria-label="Fermer le suivi">×</button>
+            </header>
+            <div id="progressSummary" class="progress-summary"></div>
+            <div id="progressDetails" class="progress-details"></div>
+            <button id="clearProgress" class="clear-progress-button" type="button">Effacer le suivi local</button>
+          </div>
+        </aside>
       </section>
     </main>
 
     <script src="src/config.js"></script>
     <script src="src/audio.js"></script>
+    <script src="src/storage.js"></script>
     <script src="src/app.js"></script>
   </body>
 </html>

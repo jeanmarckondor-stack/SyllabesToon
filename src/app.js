@@ -27,6 +27,12 @@ const studentNameInput = document.querySelector("#studentName");
 const startGameButton = document.querySelector("#startGame");
 const levelPicker = document.querySelector("#levelPicker");
 const levelName = document.querySelector("#levelName");
+const openProgressButton = document.querySelector("#openProgress");
+const closeProgressButton = document.querySelector("#closeProgress");
+const clearProgressButton = document.querySelector("#clearProgress");
+const progressPanel = document.querySelector("#progressPanel");
+const progressSummary = document.querySelector("#progressSummary");
+const progressDetails = document.querySelector("#progressDetails");
 let levelButtons = [];
 const styleButtons = Array.from(document.querySelectorAll(".style-button"));
 
@@ -183,6 +189,7 @@ function maybeShowHint() {
 
 function completeRound() {
   state.completed = true;
+  recordCompletedRound();
   feedbackText.textContent = `${state.studentName}, ${sample(config.completionMessages).toLowerCase()}`;
   showRewardBadge();
   animateMascot("celebrate");
@@ -190,6 +197,20 @@ function completeRound() {
   board.classList.add("celebrate");
   speak("Bravo, tu as réussi");
   setTimeout(() => board.classList.remove("celebrate"), 1400);
+}
+
+function recordCompletedRound() {
+  const level = levels[state.levelIndex];
+  window.SyllabesToonStorage.addRecord({
+    studentName: state.studentName,
+    levelIndex: state.levelIndex,
+    levelName: level.name,
+    target: state.target,
+    found: state.found,
+    goal: state.goal,
+    mistakes: state.mistakes || 0,
+    theme: getCurrentTheme(),
+  });
 }
 
 function showRewardBadge() {
@@ -266,6 +287,122 @@ function selectTheme(theme) {
   });
 }
 
+function getCurrentTheme() {
+  return config.themes.find((theme) => document.body.classList.contains(theme.id))?.label || "Candy";
+}
+
+function openProgressPanel() {
+  renderProgressPanel();
+  progressPanel.classList.remove("hidden");
+}
+
+function closeProgressPanel() {
+  progressPanel.classList.add("hidden");
+}
+
+function renderProgressPanel() {
+  const summary = window.SyllabesToonStorage.summarize();
+  progressSummary.innerHTML = "";
+  progressDetails.innerHTML = "";
+
+  progressSummary.append(
+    createMetric("Manches", summary.totalRounds),
+    createMetric("Élèves", summary.students.length),
+    createMetric("À revoir", summary.difficultSyllables.filter((item) => item.mistakes > 0).length),
+  );
+
+  progressDetails.append(
+    createProgressSection("Par élève", renderStudentStats(summary.students)),
+    createProgressSection("Syllabes à surveiller", renderSyllableStats(summary.difficultSyllables)),
+    createProgressSection("Historique récent", renderRecentRecords(summary.recent)),
+  );
+}
+
+function createMetric(label, value) {
+  const metric = document.createElement("article");
+  metric.className = "progress-metric";
+  metric.innerHTML = `<strong>${value}</strong><span>${label}</span>`;
+  return metric;
+}
+
+function createProgressSection(title, content) {
+  const section = document.createElement("section");
+  section.className = "progress-section";
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+  section.append(heading, content);
+  return section;
+}
+
+function renderStudentStats(students) {
+  if (!students.length) {
+    return createEmptyProgressText("Aucune séance enregistrée pour l'instant.");
+  }
+
+  const list = document.createElement("div");
+  list.className = "progress-list";
+  students.forEach((student) => {
+    const item = document.createElement("p");
+    item.innerHTML = `<strong>${student.name}</strong><span>${student.rounds} manche(s), ${student.mistakes} erreur(s)</span>`;
+    list.appendChild(item);
+  });
+  return list;
+}
+
+function renderSyllableStats(syllablesStats) {
+  const withMistakes = syllablesStats.filter((item) => item.mistakes > 0);
+  if (!withMistakes.length) {
+    return createEmptyProgressText("Pas encore de syllabe difficile repérée.");
+  }
+
+  const list = document.createElement("div");
+  list.className = "progress-list";
+  withMistakes.forEach((item) => {
+    const row = document.createElement("p");
+    row.innerHTML = `<strong>${item.syllable}</strong><span>${item.mistakes} erreur(s) sur ${item.rounds} manche(s)</span>`;
+    list.appendChild(row);
+  });
+  return list;
+}
+
+function renderRecentRecords(records) {
+  if (!records.length) {
+    return createEmptyProgressText("Les manches terminées apparaîtront ici.");
+  }
+
+  const list = document.createElement("div");
+  list.className = "progress-list recent";
+  records.forEach((record) => {
+    const item = document.createElement("p");
+    const date = new Date(record.recordedAt).toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    item.innerHTML = `<strong>${record.studentName} - ${record.target}</strong><span>${date}, niveau ${record.levelIndex + 1}, ${record.mistakes} erreur(s)</span>`;
+    list.appendChild(item);
+  });
+  return list;
+}
+
+function createEmptyProgressText(text) {
+  const empty = document.createElement("p");
+  empty.className = "progress-empty";
+  empty.textContent = text;
+  return empty;
+}
+
+function clearProgress() {
+  const confirmed = window.confirm("Effacer le suivi local enregistré sur ce navigateur ?");
+  if (!confirmed) {
+    return;
+  }
+
+  window.SyllabesToonStorage.clearRecords();
+  renderProgressPanel();
+}
+
 function startGame() {
   const name = studentNameInput.value.trim();
   state.studentName = name || "toi";
@@ -278,6 +415,9 @@ function startGame() {
 nextRoundButton.addEventListener("click", createRound);
 playSoundButton.addEventListener("click", playTargetSound);
 startGameButton.addEventListener("click", startGame);
+openProgressButton.addEventListener("click", openProgressPanel);
+closeProgressButton.addEventListener("click", closeProgressPanel);
+clearProgressButton.addEventListener("click", clearProgress);
 studentNameInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     startGame();

@@ -270,6 +270,8 @@ L'architecture devra toutefois prevoir:
 - une sauvegarde locale dans un premier temps;
 - une possible synchronisation en ligne plus tard.
 
+Dans le prototype actuel, un premier suivi local peut etre enregistre dans le navigateur: prenom, niveau, syllabe cible, erreurs et date. Ce suivi reste volontairement simple et pourra servir de base a un futur espace adulte plus complet.
+
 ## 11. Architecture attendue
 
 Le projet doit etre maintenable et extensible.

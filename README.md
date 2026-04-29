@@ -10,6 +10,7 @@ Le premier module vise la reconnaissance de syllabes simples: l'enfant entend un
 - [Guide audio et assets](docs/guides/audio-et-assets.md)
 - [Guide de progression de difficulté](docs/guides/progression-difficulte.md)
 - [Guide de la banque de syllabes](docs/guides/banque-syllabes.md)
+- [Guide du suivi local](docs/guides/suivi-local.md)
 
 ## Decisions de cadrage
 
