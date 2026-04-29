@@ -10,6 +10,8 @@ const state = {
   completed: false,
   studentName: "toi",
   started: false,
+  targetHistoryByLevel: {},
+  targetQueuesByLevel: {},
 };
 
 const board = document.querySelector("#cloudBoard");
@@ -115,7 +117,7 @@ function isVowel(letter) {
 
 function createRound() {
   const level = levels[state.levelIndex];
-  state.target = sample(level.targetPool || config.starterSyllables);
+  state.target = pickNextTargetForLevel(state.levelIndex);
   state.goal = level.targets;
   state.found = 0;
   state.mistakes = 0;
@@ -135,6 +137,56 @@ function createRound() {
 
   renderBoard(shuffle(cards), level);
   setTimeout(playTargetSound, 300);
+}
+
+function pickNextTargetForLevel(levelIndex) {
+  const level = levels[levelIndex];
+  const pool = [...new Set(level.targetPool || config.starterSyllables)];
+  const levelKey = String(levelIndex);
+  const recent = state.targetHistoryByLevel[levelKey] || [];
+  const avoidCount = getAvoidCount(pool.length);
+  const recentToAvoid = recent.slice(-avoidCount);
+
+  let queue = state.targetQueuesByLevel[levelKey] || [];
+  queue = queue.filter((syllable) => pool.includes(syllable));
+
+  if (!queue.length) {
+    queue = shuffle(pool);
+  }
+
+  let candidateIndex = queue.findIndex((syllable) => !recentToAvoid.includes(syllable));
+  if (candidateIndex === -1) {
+    queue = shuffle(pool.filter((syllable) => !recentToAvoid.includes(syllable)));
+    if (!queue.length) {
+      queue = shuffle(pool);
+    }
+    candidateIndex = 0;
+  }
+
+  const [target] = queue.splice(candidateIndex, 1);
+  state.targetQueuesByLevel[levelKey] = queue;
+  state.targetHistoryByLevel[levelKey] = [...recent, target].slice(-Math.max(avoidCount + 2, 6));
+  return target;
+}
+
+function getAvoidCount(poolSize) {
+  if (poolSize <= 1) {
+    return 0;
+  }
+
+  if (poolSize <= 3) {
+    return 1;
+  }
+
+  if (poolSize <= 6) {
+    return 2;
+  }
+
+  if (poolSize <= 12) {
+    return 3;
+  }
+
+  return 5;
 }
 
 function renderBoard(cards, level) {

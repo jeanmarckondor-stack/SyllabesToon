@@ -60,6 +60,19 @@ Pour ajouter un niveau, copier un bloc existant puis ajuster:
 
 Les boutons de niveaux sont generes automatiquement: il n'est pas necessaire de modifier `index.html` pour ajouter un niveau.
 
+## Rotation des syllabes cibles
+
+Le jeu evite de redemander trop souvent la meme syllabe.
+
+Pour chaque niveau:
+
+- le `targetPool` est melange;
+- les syllabes sont parcourues avant d'etre remelangees;
+- les dernieres syllabes demandees sont temporairement evitees;
+- plus le pool est grand, plus l'historique d'evitement est long.
+
+Cela permet de garder une grande variete tout en conservant une part d'aleatoire.
+
 ## Stabilisation de l'expérience enfant
 
 Les niveaux doivent rester confortables visuellement:
