@@ -44,8 +44,14 @@ Chaque mini-scene contient:
 - `name`;
 - `message`;
 - `tone`;
-- `className`.
-- `symbols`.
+- `durationMs`;
+- `className`;
+- `props`.
+
+Chaque element de `props` peut etre:
+
+- un element dessine en CSS avec `label` et `className`;
+- un asset image avec `asset` et `className`.
 
 Les sons sont generes localement par `src/audio.js`. Aucun fichier son de recompense n'est necessaire pour cette premiere version.
 
@@ -59,11 +65,15 @@ Mini-scenes actuelles:
 - pop de confettis;
 - nuage calin;
 - portail magique.
+- saut de la mascotte;
+- pluie de bonbons;
+- final musical;
+- panneau super.
 
 ## Pistes futures
 
-- Ajouter de vrais sons enregistres ou musicaux.
-- Ajouter de courtes videos ou animations exportees.
-- Remplacer certaines mini-scenes CSS par de vrais assets illustres.
+- Ajouter de vrais sons enregistres ou musicaux dans `assets/audio/rewards`.
+- Ajouter de courtes videos ou animations exportees dans `assets/videos/rewards`.
+- Remplacer certaines mini-scenes CSS par de vrais assets illustres en changeant seulement les `props`.
 - Adapter les recompenses selon l'univers Candy, Toon ou Manga.
 - Debloquer une petite animation speciale apres plusieurs manches reussies.

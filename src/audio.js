@@ -111,6 +111,12 @@ window.SyllabesToonAudio = (() => {
       fanfare: [392, 523.25, 659.25, 783.99],
       bubble: [440, 554.37, 493.88, 659.25],
       soft: [329.63, 392, 493.88],
+      launch: [196, 293.66, 392, 587.33, 783.99],
+      rainbow: [392, 493.88, 587.33, 659.25, 783.99],
+      parade: [523.25, 659.25, 523.25, 783.99, 1046.5],
+      candy: [659.25, 783.99, 880, 783.99, 1046.5],
+      drum: [146.83, 146.83, 220, 146.83, 329.63],
+      spotlight: [261.63, 392, 523.25, 659.25],
     };
     const notes = patterns[kind] || patterns.sparkle;
 
@@ -120,7 +126,7 @@ window.SyllabesToonAudio = (() => {
       const start = now + index * 0.11;
       const duration = 0.16;
 
-      oscillator.type = index % 2 === 0 ? "sine" : "triangle";
+      oscillator.type = kind === "drum" ? "square" : (index % 2 === 0 ? "sine" : "triangle");
       oscillator.frequency.setValueAtTime(frequency, start);
       gain.gain.setValueAtTime(0.0001, start);
       gain.gain.exponentialRampToValueAtTime(0.08, start + 0.018);
