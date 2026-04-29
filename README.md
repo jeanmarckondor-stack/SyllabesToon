@@ -9,6 +9,7 @@ Le premier module vise la reconnaissance de syllabes simples: l'enfant entend un
 - [Cahier des charges](docs/cahier-des-charges.md)
 - [Guide audio et assets](docs/guides/audio-et-assets.md)
 - [Guide de progression de difficulté](docs/guides/progression-difficulte.md)
+- [Guide de la banque de syllabes](docs/guides/banque-syllabes.md)
 
 ## Decisions de cadrage
 

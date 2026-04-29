@@ -17,6 +17,8 @@ Convention de nommage:
 - `bu.mp3`
 - `se.mp3`
 
+La banque actuelle contient davantage de syllabes. La liste complete est documentee dans `docs/guides/banque-syllabes.md`.
+
 Formats acceptes par le prototype:
 
 - `.mp3`
