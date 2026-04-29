@@ -41,12 +41,23 @@ const SYLLABLE_GROUPS = {
     "as", "es", "is", "os", "us",
     "af", "ef", "if", "of", "uf",
   ],
+  vowelPairs: [
+    "ai", "au", "ei", "eu", "oi", "ou", "ui",
+  ],
+  vowelTriples: [
+    "eau", "oui",
+  ],
 };
 
 window.SYLLABESTOON_CONFIG = {
   syllableGroups: SYLLABLE_GROUPS,
 
-  syllables: [...SYLLABLE_GROUPS.extended, ...SYLLABLE_GROUPS.inverseCore],
+  syllables: [
+    ...SYLLABLE_GROUPS.extended,
+    ...SYLLABLE_GROUPS.inverseCore,
+    ...SYLLABLE_GROUPS.vowelPairs,
+    ...SYLLABLE_GROUPS.vowelTriples,
+  ],
 
   starterSyllables: SYLLABLE_GROUPS.starter,
 
@@ -212,7 +223,12 @@ window.SYLLABESTOON_CONFIG = {
       name: "Grand mélange",
       totalCards: 12,
       targets: 3,
-      targetPool: [...SYLLABLE_GROUPS.extended, ...SYLLABLE_GROUPS.inverseCore],
+      targetPool: [
+        ...SYLLABLE_GROUPS.extended,
+        ...SYLLABLE_GROUPS.inverseCore,
+        ...SYLLABLE_GROUPS.vowelPairs,
+        ...SYLLABLE_GROUPS.vowelTriples,
+      ],
       rotations: [-14, -9, -4, 0, 5, 10, 14],
       sizes: ["large", "medium", "small"],
       fontVariants: ["readable", "bouncy", "round"],

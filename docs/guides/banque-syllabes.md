@@ -14,6 +14,8 @@ Elles sont organisees par groupes:
 - `extended`: banque complete de syllabes consonne + voyelle;
 - `inverseEarly`: premieres syllabes voyelle + consonne;
 - `inverseCore`: banque elargie de syllabes voyelle + consonne.
+- `vowelPairs`: combinaisons de deux voyelles;
+- `vowelTriples`: combinaisons de trois voyelles.
 
 Le jeu utilise la banque complete pour les distracteurs, mais chaque niveau choisit ses syllabes cibles dans un `targetPool` plus restreint.
 
@@ -41,11 +43,16 @@ Syllabes inversees actuellement couvertes:
 - s: as, es, is, os, us;
 - f: af, ef, if, of, uf.
 
+Combinaisons vocaliques actuellement couvertes:
+
+- deux voyelles: ai, au, ei, eu, oi, ou, ui;
+- trois voyelles: eau, oui.
+
 ## Ce qui n'est pas encore inclus
 
 Pour eviter de complexifier trop vite, la banque n'inclut pas encore:
 
-- les sons complexes: ch, ou, on, an, in;
+- les sons complexes non encore ajoutes: ch, on, an, in;
 - les syllabes avec consonnes doubles ou groupes consonantiques: pra, tri, blo;
 - les mots complets.
 
