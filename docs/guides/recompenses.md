@@ -57,15 +57,14 @@ Chaque element de `props` peut etre:
 Une recompense peut aussi utiliser une video MP4 avec:
 
 - `video`: chemin du fichier MP4;
-- `loop`: `true` ou `false`.
 
-Les videos de recompense sont rangees dans `assets/videos/rewards`.
+Les videos de recompense sont rangees dans `assets/videos/rewards`. Elles sont jouees en boucle tant que l'enfant ou l'adulte ne ferme pas la fenetre de recompense.
 
 Les sons sont generes localement par `src/audio.js`. Aucun fichier son de recompense n'est necessaire pour cette premiere version.
 
 Mini-scenes actuelles:
 
-- video surprise MP4;
+- videos surprise MP4;
 - danse des etoiles;
 - fusee de la reussite;
 - fete des bulles;

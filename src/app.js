@@ -381,7 +381,7 @@ function createRewardVideo(reward) {
   video.src = reward.video;
   video.autoplay = true;
   video.controls = false;
-  video.loop = Boolean(reward.loop);
+  video.loop = true;
   video.playsInline = true;
   video.preload = "auto";
   video.setAttribute("aria-label", reward.name);

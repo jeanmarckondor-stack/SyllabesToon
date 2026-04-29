@@ -310,7 +310,14 @@ window.SYLLABESTOON_CONFIG = {
       message: "Une petite video se lance pour feter ta reussite.",
       className: "show-video-reward",
       video: "assets/videos/rewards/recomp1.mp4",
-      loop: false,
+      props: [],
+    },
+    {
+      id: "videoRecomp2",
+      name: "La deuxieme video surprise",
+      message: "Une nouvelle video apparait pour celebrer ton effort.",
+      className: "show-video-reward",
+      video: "assets/videos/rewards/recomp2.mp4",
       props: [],
     },
     {
