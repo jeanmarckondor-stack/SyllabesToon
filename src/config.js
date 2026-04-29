@@ -309,7 +309,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "La danse des etoiles",
       message: "Les etoiles dansent pour ton ecoute.",
       tone: "sparkle",
-      durationMs: 5600,
       className: "show-star-dance",
       props: [
         { label: "STAR", className: "prop-star" },
@@ -324,7 +323,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "La fusee de la reussite",
       message: "Ta reponse fait decoller la fusee.",
       tone: "launch",
-      durationMs: 5200,
       className: "show-rocket-launch",
       props: [
         { label: "", className: "prop-rocket" },
@@ -339,7 +337,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "La fete des bulles",
       message: "Des bulles joyeuses montent partout.",
       tone: "bubble",
-      durationMs: 5800,
       className: "show-bubble-party",
       props: [
         { label: "", className: "prop-bubble" },
@@ -355,7 +352,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "La vague arc-en-ciel",
       message: "Un arc-en-ciel traverse l'ecran pour toi.",
       tone: "rainbow",
-      durationMs: 5400,
       className: "show-rainbow-wave",
       props: [],
     },
@@ -364,7 +360,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "Le projecteur toon",
       message: "La lumiere se pose sur ta reussite.",
       tone: "soft",
-      durationMs: 5200,
       className: "show-toon-spotlight",
       props: [
         { asset: "assets/images/mascot.png", className: "prop-mascot" },
@@ -377,7 +372,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "Le grand pop de confettis",
       message: "Tout eclate en couleurs parce que tu as reussi.",
       tone: "fanfare",
-      durationMs: 5000,
       className: "show-confetti-pop",
       props: [
         { label: "", className: "prop-confetti square" },
@@ -395,7 +389,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "Le nuage calin",
       message: "Un nuage doux vient te feliciter.",
       tone: "soft",
-      durationMs: 6200,
       className: "show-moon-cloud",
       props: [
         { label: "", className: "prop-cloud" },
@@ -409,7 +402,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "Le portail magique",
       message: "Ta syllabe ouvre un portail de lumiere.",
       tone: "sparkle",
-      durationMs: 5600,
       className: "show-magic-portal",
       props: [
         { label: "", className: "prop-portal portal-a" },
@@ -423,7 +415,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "Le saut de la mascotte",
       message: "La mascotte saute parce que tu as trouve.",
       tone: "parade",
-      durationMs: 5400,
       className: "show-mascot-jump",
       props: [
         { asset: "assets/images/mascot.png", className: "prop-mascot-big" },
@@ -437,7 +428,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "La pluie de bonbons",
       message: "Des surprises colorees tombent pour toi.",
       tone: "candy",
-      durationMs: 5800,
       className: "show-candy-rain",
       props: [
         { label: "", className: "prop-candy" },
@@ -453,7 +443,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "Le final musical",
       message: "Un petit final joue pour ta reussite.",
       tone: "drum",
-      durationMs: 5200,
       className: "show-drum-finale",
       props: [
         { label: "", className: "prop-drum" },
@@ -468,7 +457,6 @@ window.SYLLABESTOON_CONFIG = {
       name: "Le panneau super",
       message: "Un grand panneau s'allume pour te feliciter.",
       tone: "spotlight",
-      durationMs: 5600,
       className: "show-super-board",
       props: [
         { label: "SUPER", className: "prop-super-board" },

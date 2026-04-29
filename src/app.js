@@ -42,7 +42,6 @@ const rewardMessage = document.querySelector("#rewardMessage");
 const closeRewardButton = document.querySelector("#closeReward");
 const continueRewardButton = document.querySelector("#continueReward");
 let levelButtons = [];
-let rewardCloseTimer = null;
 const styleButtons = Array.from(document.querySelectorAll(".style-button"));
 
 function sample(list) {
@@ -345,7 +344,6 @@ function showCelebrationReward() {
   rewardMessage.textContent = buildRewardMessage(reward);
   rewardOverlay.classList.remove("hidden");
   window.SyllabesToonAudio.playRewardTone(reward.tone);
-  scheduleRewardClose(reward.durationMs);
 }
 
 function buildRewardAnimation(reward) {
@@ -380,20 +378,7 @@ function buildRewardMessage(reward) {
 }
 
 function closeRewardOverlay() {
-  clearRewardCloseTimer();
   rewardOverlay.classList.add("hidden");
-}
-
-function scheduleRewardClose(durationMs = 5600) {
-  clearRewardCloseTimer();
-  rewardCloseTimer = window.setTimeout(closeRewardOverlay, durationMs);
-}
-
-function clearRewardCloseTimer() {
-  if (rewardCloseTimer) {
-    window.clearTimeout(rewardCloseTimer);
-    rewardCloseTimer = null;
-  }
 }
 
 function animateMascot(mood) {

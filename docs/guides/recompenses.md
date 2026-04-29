@@ -44,9 +44,10 @@ Chaque mini-scene contient:
 - `name`;
 - `message`;
 - `tone`;
-- `durationMs`;
 - `className`;
 - `props`.
+
+La recompense reste affichee tant que l'enfant ou l'adulte ne clique pas sur le bouton de fermeture ou sur `Continuer`.
 
 Chaque element de `props` peut etre:
 
