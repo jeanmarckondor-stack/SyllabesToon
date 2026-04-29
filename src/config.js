@@ -30,12 +30,23 @@ const SYLLABLE_GROUPS = {
     "da", "de", "di", "do", "du",
     "va", "ve", "vi", "vo", "vu",
   ],
+  inverseEarly: [
+    "al", "el", "il", "ol", "ul",
+    "am", "em", "im", "om", "um",
+  ],
+  inverseCore: [
+    "al", "el", "il", "ol", "ul",
+    "am", "em", "im", "om", "um",
+    "ar", "er", "ir", "or", "ur",
+    "as", "es", "is", "os", "us",
+    "af", "ef", "if", "of", "uf",
+  ],
 };
 
 window.SYLLABESTOON_CONFIG = {
   syllableGroups: SYLLABLE_GROUPS,
 
-  syllables: SYLLABLE_GROUPS.extended,
+  syllables: [...SYLLABLE_GROUPS.extended, ...SYLLABLE_GROUPS.inverseCore],
 
   starterSyllables: SYLLABLE_GROUPS.starter,
 
@@ -182,6 +193,34 @@ window.SYLLABESTOON_CONFIG = {
       density: "dense",
       showTarget: false,
       hintAfterMistakes: 2,
+    },
+    {
+      name: "Sons inversés",
+      totalCards: 10,
+      targets: 2,
+      targetPool: SYLLABLE_GROUPS.inverseEarly,
+      rotations: [-10, -6, 0, 6, 10],
+      sizes: ["large", "medium", "small"],
+      fontVariants: ["readable", "bouncy", "round"],
+      distractorMode: "inverseFar",
+      colorVariety: "high",
+      density: "dense",
+      showTarget: true,
+      hintAfterMistakes: 2,
+    },
+    {
+      name: "Grand mélange",
+      totalCards: 12,
+      targets: 3,
+      targetPool: [...SYLLABLE_GROUPS.extended, ...SYLLABLE_GROUPS.inverseCore],
+      rotations: [-14, -9, -4, 0, 5, 10, 14],
+      sizes: ["large", "medium", "small"],
+      fontVariants: ["readable", "bouncy", "round"],
+      distractorMode: "near",
+      colorVariety: "high",
+      density: "dense",
+      showTarget: false,
+      hintAfterMistakes: 3,
     },
   ],
 

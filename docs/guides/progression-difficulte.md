@@ -27,6 +27,8 @@ Les niveaux du prototype combinent plusieurs leviers:
 6. `Même départ`: distracteurs proches par la consonne initiale.
 7. `Trois étoiles`: trois occurrences a retrouver, nuage plus dense.
 8. `Écoute seule`: la cible n'est plus affichee, elle est seulement entendue.
+9. `Sons inversés`: introduction des syllabes voyelle + consonne, par exemple al, el, il, ol, ul.
+10. `Grand mélange`: melange de syllabes consonne + voyelle et voyelle + consonne.
 
 ## Modes de distracteurs
 
@@ -34,6 +36,8 @@ Les niveaux du prototype combinent plusieurs leviers:
 - `mixed`: melange de syllabes variees.
 - `sameVowel`: syllabes partageant la meme voyelle.
 - `sameConsonant`: syllabes partageant la meme consonne de depart.
+- `sameEnding`: syllabes partageant la meme consonne finale.
+- `inverseFar`: syllabes inversees differentes de la cible.
 - `near`: syllabes proches par la voyelle ou la consonne.
 
 ## Modifier ou ajouter un niveau

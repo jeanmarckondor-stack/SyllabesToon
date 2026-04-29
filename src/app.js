@@ -70,27 +70,47 @@ function pickDistractors(target, count, mode) {
 }
 
 function getDistractorCandidates(target, mode) {
-  const targetConsonant = target[0];
-  const targetVowel = target[1];
+  const targetFirst = target[0];
+  const targetSecond = target[1];
+  const targetIsInverse = isVowel(targetFirst) && !isVowel(targetSecond);
   const mixed = syllables.filter((item) => item !== target);
 
   if (mode === "far") {
-    return mixed.filter((item) => item[0] !== targetConsonant && item[1] !== targetVowel);
+    return mixed.filter((item) => item[0] !== targetFirst && item[1] !== targetSecond);
   }
 
   if (mode === "sameVowel") {
-    return mixed.filter((item) => item[1] === targetVowel);
+    return mixed.filter((item) => item[1] === targetSecond);
   }
 
   if (mode === "sameConsonant") {
-    return mixed.filter((item) => item[0] === targetConsonant);
+    return mixed.filter((item) => item[0] === targetFirst);
+  }
+
+  if (mode === "sameEnding") {
+    return mixed.filter((item) => item[1] === targetSecond);
+  }
+
+  if (mode === "inverseFar") {
+    return mixed.filter((item) => {
+      const itemIsInverse = isVowel(item[0]) && !isVowel(item[1]);
+      return itemIsInverse && item[0] !== targetFirst && item[1] !== targetSecond;
+    });
   }
 
   if (mode === "near") {
-    return mixed.filter((item) => item[0] === targetConsonant || item[1] === targetVowel);
+    if (targetIsInverse) {
+      return mixed.filter((item) => item[0] === targetFirst || item[1] === targetSecond);
+    }
+
+    return mixed.filter((item) => item[0] === targetFirst || item[1] === targetSecond);
   }
 
   return mixed;
+}
+
+function isVowel(letter) {
+  return ["a", "e", "i", "o", "u", "y"].includes(letter);
 }
 
 function createRound() {

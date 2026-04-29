@@ -1,6 +1,6 @@
 # Banque de syllabes
 
-La banque actuelle se concentre sur des syllabes simples de type consonne + voyelle.
+La banque actuelle contient des syllabes simples de type consonne + voyelle, puis des syllabes plus difficiles de type voyelle + consonne.
 
 ## Principe
 
@@ -11,9 +11,11 @@ Elles sont organisees par groupes:
 - `starter`: premiere liste tres courte pour les premiers niveaux;
 - `early`: liste elargie mais encore limitee;
 - `core`: ensemble central de syllabes simples;
-- `extended`: banque complete actuelle.
+- `extended`: banque complete de syllabes consonne + voyelle;
+- `inverseEarly`: premieres syllabes voyelle + consonne;
+- `inverseCore`: banque elargie de syllabes voyelle + consonne.
 
-Le jeu utilise `extended` pour les distracteurs, mais chaque niveau choisit ses syllabes cibles dans un `targetPool` plus restreint.
+Le jeu utilise la banque complete pour les distracteurs, mais chaque niveau choisit ses syllabes cibles dans un `targetPool` plus restreint.
 
 ## Banque actuelle
 
@@ -31,12 +33,19 @@ Consonnes actuellement couvertes:
 - d: da, de, di, do, du;
 - v: va, ve, vi, vo, vu.
 
+Syllabes inversees actuellement couvertes:
+
+- l: al, el, il, ol, ul;
+- m: am, em, im, om, um;
+- r: ar, er, ir, or, ur;
+- s: as, es, is, os, us;
+- f: af, ef, if, of, uf.
+
 ## Ce qui n'est pas encore inclus
 
 Pour eviter de complexifier trop vite, la banque n'inclut pas encore:
 
 - les sons complexes: ch, ou, on, an, in;
-- les syllabes inverses: ar, ol, is;
 - les syllabes avec consonnes doubles ou groupes consonantiques: pra, tri, blo;
 - les mots complets.
 
