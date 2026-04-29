@@ -60,23 +60,13 @@ Une recompense peut aussi utiliser une video MP4 avec:
 
 Les videos de recompense sont rangees dans `assets/videos/rewards`. Elles sont jouees en boucle tant que l'enfant ou l'adulte ne ferme pas la fenetre de recompense.
 
-Les sons sont generes localement par `src/audio.js`. Aucun fichier son de recompense n'est necessaire pour cette premiere version.
+Les sons des mini-scenes CSS peuvent etre generes localement par `src/audio.js`, mais les recompenses actives utilisent actuellement uniquement les videos MP4.
 
-Mini-scenes actuelles:
+Recompenses actives actuellement:
 
 - videos surprise MP4;
-- danse des etoiles;
-- fusee de la reussite;
-- fete des bulles;
-- vague arc-en-ciel;
-- projecteur toon;
-- pop de confettis;
-- nuage calin;
-- portail magique.
-- saut de la mascotte;
-- pluie de bonbons;
-- final musical;
-- panneau super.
+
+Les anciennes mini-scenes animees CSS ne sont plus dans la rotation des recompenses. Elles pourront etre reactivees ou remplacees plus tard si besoin.
 
 ## Pistes futures
 
