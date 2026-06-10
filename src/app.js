@@ -1,5 +1,7 @@
 const config = window.SYLLABESTOON_CONFIG;
-const syllables = config.syllables;
+const configuredSyllables = typeof config.getActiveSyllables === "function" ? config.getActiveSyllables() : config.syllables;
+const allSyllableTexts = typeof config.getSyllableTexts === "function" ? config.getSyllableTexts() : config.syllables;
+const syllables = configuredSyllables.length >= 3 ? configuredSyllables : allSyllableTexts;
 const levels = config.levels;
 
 const state = {
@@ -43,6 +45,8 @@ const closeRewardButton = document.querySelector("#closeReward");
 const continueRewardButton = document.querySelector("#continueReward");
 let levelButtons = [];
 const styleButtons = Array.from(document.querySelectorAll(".style-button"));
+let availableVideosPromise = null;
+let currentRewardAudio = null;
 
 function sample(list) {
   return list[randomInt(list.length)];
@@ -72,8 +76,9 @@ function randomInt(max) {
 }
 
 function pickDistractors(target, count, mode) {
-  const candidates = getDistractorCandidates(target, mode);
-  const fallback = syllables.filter((item) => item !== target);
+  const levelSyllables = getPlayableSyllablesForLevel(state.levelIndex);
+  const candidates = getDistractorCandidates(target, mode, levelSyllables);
+  const fallback = levelSyllables.filter((item) => item !== target);
   const pool = [...new Set([...candidates, ...fallback])];
   const shuffled = shuffle(pool);
 
@@ -88,11 +93,11 @@ function pickDistractors(target, count, mode) {
   return repeated;
 }
 
-function getDistractorCandidates(target, mode) {
+function getDistractorCandidates(target, mode, levelSyllables) {
   const targetFirst = target[0];
   const targetSecond = target[1];
   const targetIsInverse = isVowel(targetFirst) && !isVowel(targetSecond);
-  const mixed = syllables.filter((item) => item !== target);
+  const mixed = levelSyllables.filter((item) => item !== target);
 
   if (mode === "far") {
     return mixed.filter((item) => item[0] !== targetFirst && item[1] !== targetSecond);
@@ -157,8 +162,7 @@ function createRound() {
 }
 
 function pickNextTargetForLevel(levelIndex) {
-  const level = levels[levelIndex];
-  const pool = [...new Set(level.targetPool || config.starterSyllables)];
+  const pool = getPlayableSyllablesForLevel(levelIndex);
   const levelKey = String(levelIndex);
   const recent = state.targetHistoryByLevel[levelKey] || [];
   const avoidCount = getAvoidCount(pool.length);
@@ -184,6 +188,17 @@ function pickNextTargetForLevel(levelIndex) {
   state.targetQueuesByLevel[levelKey] = queue;
   state.targetHistoryByLevel[levelKey] = [...recent, target].slice(-Math.max(avoidCount + 2, 6));
   return target;
+}
+
+function getPlayableSyllablesForLevel(levelIndex) {
+  if (typeof config.getSyllablesForLevel === "function") {
+    const activeLevelPool = config.getSyllablesForLevel(levelIndex).map((entry) => entry.text);
+    if (activeLevelPool.length) {
+      return activeLevelPool;
+    }
+  }
+
+  return syllables;
 }
 
 function getAvoidCount(poolSize) {
@@ -219,7 +234,13 @@ function renderBoard(cards, level) {
 
     button.type = "button";
     button.className = `syllable-card ${size} font-${fontVariant} palette-${palette}`;
-    button.textContent = card.text;
+    button.textContent = "";
+    Array.from(card.text).forEach((letter, letterIndex) => {
+      const letterElement = document.createElement("span");
+      letterElement.className = `toon-letter letter-${letterIndex % 4}`;
+      letterElement.textContent = letter;
+      button.appendChild(letterElement);
+    });
     button.style.setProperty("--rotate", `${rotation}deg`);
     button.dataset.target = String(card.target);
     button.addEventListener("click", () => handleCardClick(button));
@@ -335,17 +356,273 @@ function showRewardBadge() {
   });
 }
 
-function showCelebrationReward() {
-  const reward = sample(config.rewardShows);
+async function showCelebrationReward() {
+  const levelIndex = state.levelIndex;
+  const [rewards, sounds] = await Promise.all([
+    getRewardsForLevel(levelIndex),
+    getRewardSoundsForLevel(levelIndex),
+  ]);
+  const reward = sample(rewards);
+  const sound = sample(sounds);
+  console.info("[syllabestoon] selected reward video", {
+    levelIndex,
+    file: reward.file || reward.video,
+    source: reward.source || "unknown",
+  });
   rewardAnimation.className = `reward-animation ${reward.className}`;
   rewardAnimation.innerHTML = "";
   buildRewardAnimation(reward).forEach((element) => rewardAnimation.appendChild(element));
   rewardTitle.textContent = reward.name;
   rewardMessage.textContent = buildRewardMessage(reward);
   rewardOverlay.classList.remove("hidden");
+  playRewardSound(sound);
   if (reward.tone) {
     window.SyllabesToonAudio.playRewardTone(reward.tone);
   }
+}
+
+function getAvailableVideos() {
+  if (!availableVideosPromise) {
+    availableVideosPromise = getAvailableRewardVideoFiles()
+      .then((videos) => normalizeVideoRewards(videos, "manifest"))
+      .then((videos) => videos.length ? videos : getFallbackVideoRewards())
+      .catch(() => getFallbackVideoRewards());
+  }
+
+  return availableVideosPromise;
+}
+
+async function getRewardsForLevel(levelIndex) {
+  try {
+    const videos = await getAvailableRewardVideoFiles();
+    console.info("[syllabestoon] reward videos loaded", videos.map((video) => video.file));
+
+    const levelVideos = filterRewardFilesForLevel(videos, levelIndex);
+    const allowedLevelVideos = levelVideos.filter((video) => isRewardVideoAllowedForLevel(video.file, levelIndex));
+    const activeFiles = getActiveRewardVideoFileSet(videos);
+    console.info("[syllabestoon] active reward videos", [...activeFiles]);
+
+    const activeLevelVideos = allowedLevelVideos.filter((video) => activeFiles.has(video.file));
+    console.info("[syllabestoon] reward candidates for level", {
+      levelIndex,
+      candidates: activeLevelVideos.map((video) => video.file),
+    });
+
+    if (activeLevelVideos.length) {
+      return normalizeVideoRewards(activeLevelVideos, "active-manifest");
+    }
+
+    if (allowedLevelVideos.length) {
+      console.info("[syllabestoon] using fallback reward video", {
+        levelIndex,
+        reason: "no active compatible video",
+        candidates: allowedLevelVideos.map((video) => video.file),
+      });
+      return normalizeVideoRewards(allowedLevelVideos, "manifest-fallback");
+    }
+  } catch (error) {
+    console.info("[syllabestoon] using fallback reward video", {
+      levelIndex,
+      reason: "manifest unavailable",
+      message: error?.message || String(error),
+    });
+  }
+
+  return getFallbackVideoRewards(levelIndex);
+}
+
+async function getAvailableRewardVideoFiles() {
+  try {
+    const response = await fetch("assets/videos/videos.json", { cache: "no-cache" });
+    if (!response.ok) {
+      throw new Error(`Video manifest unavailable: ${response.status}`);
+    }
+
+    const manifestVideos = normalizeRewardFiles(await response.json());
+    if (manifestVideos.length) {
+      return manifestVideos;
+    }
+  } catch (error) {
+    console.info("[syllabestoon] using fallback reward video", {
+      reason: "videos.json unavailable",
+      message: error?.message || String(error),
+    });
+  }
+
+  if (typeof config.getAvailableRewardVideos === "function") {
+    const videos = normalizeRewardFiles(await config.getAvailableRewardVideos());
+    if (videos.length) {
+      return videos;
+    }
+  }
+
+  return normalizeRewardFiles(config.fallbackVideos || []);
+}
+
+function normalizeRewardFiles(files) {
+  if (!Array.isArray(files)) {
+    return [];
+  }
+
+  return files
+    .map((file) => normalizeRewardFile(file))
+    .filter(Boolean);
+}
+
+function normalizeRewardFile(rewardFile) {
+  const file = typeof rewardFile === "string" ? rewardFile : rewardFile?.file;
+  if (!file) {
+    return null;
+  }
+
+  return {
+    file,
+    levels: Array.isArray(rewardFile.levels) ? rewardFile.levels : undefined,
+  };
+}
+
+function filterRewardFilesForLevel(files, levelIndex) {
+  const levelFiles = files.filter((file) => {
+    return !Array.isArray(file.levels) || file.levels.includes(levelIndex);
+  });
+  return levelFiles.length ? levelFiles : files;
+}
+
+function getActiveRewardVideoFileSet(videos) {
+  if (typeof config.getActiveRewardVideoFiles === "function") {
+    return new Set(config.getActiveRewardVideoFiles(videos));
+  }
+
+  try {
+    const raw = window.localStorage.getItem("syllabestoon.activeRewardVideos.v1");
+    if (raw === null) {
+      return new Set(videos.map((video) => video.file));
+    }
+
+    const files = JSON.parse(raw);
+    return new Set(Array.isArray(files) ? files : []);
+  } catch {
+    return new Set(videos.map((video) => video.file));
+  }
+}
+
+function isRewardVideoAllowedForLevel(file, levelIndex) {
+  if (typeof config.isRewardVideoAllowedForLevel === "function") {
+    return config.isRewardVideoAllowedForLevel(file, levelIndex);
+  }
+
+  try {
+    const raw = window.localStorage.getItem("syllabestoon.rewardVideoLevels.v1");
+    if (!raw) {
+      return true;
+    }
+
+    const levelsByFile = JSON.parse(raw);
+    const levelIndexes = levelsByFile?.[file];
+    return !Array.isArray(levelIndexes) || levelIndexes.includes(levelIndex);
+  } catch {
+    return true;
+  }
+}
+
+function normalizeVideoRewards(videos, source = "manifest") {
+  if (!Array.isArray(videos)) {
+    return [];
+  }
+
+  return videos
+    .map((video, index) => normalizeVideoReward(video, index, source))
+    .filter(Boolean);
+}
+
+function normalizeVideoReward(video, index, source = "manifest") {
+  const file = typeof video === "string" ? video : video?.file;
+  if (!file) {
+    return null;
+  }
+
+  const filePath = file.startsWith("assets/") ? file : `assets/videos/${file}`;
+  const label = file.split("/").pop().replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ");
+  return {
+    id: `video-${index}-${file}`,
+    name: video.name || label || "Video surprise",
+    message: video.message || "Une video surprise apparait pour celebrer ton effort.",
+    className: video.className || "show-video-reward",
+    file,
+    source,
+    video: filePath,
+    levels: Array.isArray(video.levels) ? video.levels : undefined,
+    props: [],
+  };
+}
+
+function getFallbackVideoRewards(levelIndex = null) {
+  const fallbackVideos = normalizeVideoRewards(config.fallbackVideos || [], "legacy-fallback");
+  const fallbackRewards = fallbackVideos.length
+    ? fallbackVideos
+    : (config.rewardShows || []).map((reward) => ({ ...reward, source: "legacy-rewardShows" }));
+  if (levelIndex === null) {
+    return fallbackRewards;
+  }
+
+  const levelRewards = fallbackRewards.filter((reward) => {
+    return !Array.isArray(reward.levels) || reward.levels.includes(levelIndex);
+  });
+  return levelRewards.length ? levelRewards : fallbackRewards;
+}
+
+async function getRewardSoundsForLevel(levelIndex) {
+  if (typeof config.getRewardSoundsForLevel === "function") {
+    try {
+      return await config.getRewardSoundsForLevel(levelIndex);
+    } catch {
+      return getFallbackRewardSounds(levelIndex);
+    }
+  }
+
+  return getFallbackRewardSounds(levelIndex);
+}
+
+function getFallbackRewardSounds(levelIndex = null) {
+  const fallbackSounds = Array.isArray(config.fallbackRewardSounds) ? config.fallbackRewardSounds : [];
+  if (levelIndex === null) {
+    return fallbackSounds;
+  }
+
+  const levelSounds = fallbackSounds.filter((sound) => {
+    return !Array.isArray(sound.levels) || sound.levels.includes(levelIndex);
+  });
+  return levelSounds.length ? levelSounds : fallbackSounds;
+}
+
+function playRewardSound(sound) {
+  if (!sound?.file) {
+    stopCurrentRewardAudio();
+    return;
+  }
+
+  stopCurrentRewardAudio();
+  const filePath = sound.file.startsWith("assets/") ? sound.file : `assets/audio/rewards/${sound.file}`;
+  const audio = new Audio(filePath);
+  currentRewardAudio = audio;
+  audio.volume = 0.4;
+  audio.currentTime = 0;
+  audio.addEventListener("ended", () => {
+    if (currentRewardAudio === audio) {
+      currentRewardAudio = null;
+    }
+  }, { once: true });
+  audio.play().catch(() => {});
+}
+
+function stopCurrentRewardAudio() {
+  if (!currentRewardAudio) {
+    return;
+  }
+
+  currentRewardAudio.pause();
+  currentRewardAudio.currentTime = 0;
+  currentRewardAudio = null;
 }
 
 function buildRewardAnimation(reward) {
@@ -404,6 +681,7 @@ function buildRewardMessage(reward) {
 function closeRewardOverlay() {
   rewardAnimation.innerHTML = "";
   rewardOverlay.classList.add("hidden");
+  stopCurrentRewardAudio();
 }
 
 function animateMascot(mood) {

@@ -1,5 +1,7 @@
 window.SyllabesToonAudio = (() => {
   const audioCache = new Map();
+  const TEACHER_VOICE_DB = "syllabestoon.teacherVoice.v1";
+  const TEACHER_VOICE_STORE = "syllableAudio";
 
   function buildCandidates(syllable, config) {
     return config.audio.extensions.map((extension) => {
@@ -8,6 +10,12 @@ window.SyllabesToonAudio = (() => {
   }
 
   function playRecordedOrSpeak({ syllable, fallbackText, config }) {
+    return playTeacherSyllableAudio(syllable)
+      .then(() => ({ source: "teacher" }))
+      .catch(() => playCurrentFallback({ syllable, fallbackText, config }));
+  }
+
+  function playCurrentFallback({ syllable, fallbackText, config }) {
     if (!config.audio.useRecordedVoiceFirst) {
       speak(fallbackText);
       return Promise.resolve({ source: "speech" });
@@ -75,6 +83,69 @@ window.SyllabesToonAudio = (() => {
         }
       });
     });
+  }
+
+  function playTeacherSyllableAudio(syllable) {
+    return getTeacherSyllableAudio(syllable).then((audioBlob) => {
+      if (!audioBlob) {
+        return Promise.reject(new Error("No teacher audio found"));
+      }
+
+      return playAudioBlob(audioBlob);
+    });
+  }
+
+  function getTeacherSyllableAudio(syllable) {
+    if (!("indexedDB" in window)) {
+      return Promise.resolve(null);
+    }
+
+    return useTeacherVoiceStore("readonly", (store) => store.get(syllable))
+      .catch(() => null);
+  }
+
+  function useTeacherVoiceStore(mode, action) {
+    return openTeacherVoiceDb().then((db) => {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(TEACHER_VOICE_STORE, mode);
+        const store = transaction.objectStore(TEACHER_VOICE_STORE);
+        const request = action(store);
+
+        request.addEventListener("success", () => resolve(request.result));
+        request.addEventListener("error", () => reject(request.error));
+        transaction.addEventListener("complete", () => db.close());
+        transaction.addEventListener("abort", () => {
+          db.close();
+          reject(transaction.error);
+        });
+      });
+    });
+  }
+
+  function openTeacherVoiceDb() {
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.open(TEACHER_VOICE_DB, 1);
+
+      request.addEventListener("upgradeneeded", () => {
+        request.result.createObjectStore(TEACHER_VOICE_STORE);
+      });
+
+      request.addEventListener("success", () => resolve(request.result));
+      request.addEventListener("error", () => reject(request.error));
+    });
+  }
+
+  function playAudioBlob(audioBlob) {
+    const source = URL.createObjectURL(audioBlob);
+
+    return playAudio(source)
+      .then(() => {
+        window.setTimeout(() => URL.revokeObjectURL(source), 120000);
+      })
+      .catch((error) => {
+        URL.revokeObjectURL(source);
+        throw error;
+      });
   }
 
   function getAudio(source) {
@@ -145,6 +216,7 @@ window.SyllabesToonAudio = (() => {
     buildCandidates,
     playFirstAvailableAudio,
     playRecordedOrSpeak,
+    playTeacherSyllableAudio,
     playRewardTone,
     speak,
   };

@@ -34,10 +34,40 @@ Valider le cahier des charges, puis choisir la stack technique et construire un 
 
 ## Lancer le prototype
 
-Ouvrir simplement [index.html](index.html) dans un navigateur.
+Depuis la racine du projet:
 
-La voix utilise provisoirement la synthese vocale du navigateur pour permettre un test immediat. Les futurs enregistrements humains seront places dans `assets/audio`.
+```bash
+python -m http.server 8000
+```
 
-Les fichiers de syllabes enregistrees doivent etre places dans `assets/audio/syllables`, par exemple `ma.mp3`, `la.mp3`, `pi.mp3`.
+Jeu principal:
+`http://localhost:8000/index.html`
 
-Pour tester les enregistrements sans lancer une partie, ouvrir [audio-check.html](audio-check.html).
+Espace enseignant unique:
+`http://localhost:8000/teacher-manager.html`
+
+PIN temporaire enseignant: `1234`
+
+Les anciennes pages enseignant `teacher-syllables.html` et `teacher-voice.html` ont ete supprimees. Toutes les actions enseignant passent par `teacher-manager.html`.
+
+## Donnees locales
+
+- Source de verite des syllabes: `localStorage` avec la cle `syllabestoon.syllables.v1`.
+- Voix enseignante: `IndexedDB`.
+- La synthese vocale du navigateur reste le fallback si aucune voix enseignante n'est disponible.
+
+## Assets de recompense
+
+Mettre a jour la liste des videos disponibles:
+
+```bash
+node scripts/update-videos-json.js
+```
+
+Mettre a jour la liste des sons disponibles:
+
+```bash
+node scripts/update-sounds-json.js
+```
+
+Pour tester les enregistrements de syllabes sans lancer une partie, ouvrir [audio-check.html](audio-check.html).

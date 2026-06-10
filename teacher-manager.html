@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SyllabesToon - espace enseignant</title>
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body class="theme-candy teacher-pin-locked">
+    <main class="audio-check-shell">
+      <section id="teacherPinScreen" class="audio-check-panel teacher-access-panel" aria-labelledby="teacherPinTitle">
+        <p class="kicker">AccÃ¨s enseignant</p>
+        <h1 id="teacherPinTitle">Code PIN</h1>
+        <form id="teacherPinForm" class="teacher-access-form">
+          <label class="teacher-syllables-search">
+            <span>PIN enseignant</span>
+            <input id="teacherPinInput" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8" autofocus>
+          </label>
+          <button class="audio-test-button teacher-manager-main-button" type="submit">Entrer</button>
+        </form>
+        <p id="teacherPinMessage" class="teacher-syllables-message" aria-live="polite"></p>
+        <a id="teacherPinBackToGame" class="back-link teacher-pin-back-link" href="index.html">Retour au jeu</a>
+      </section>
+
+      <section id="teacherManagerContent" class="audio-check-panel teacher-manager-panel" hidden aria-hidden="true" style="display: none !important;">
+        <header class="audio-check-header">
+          <div>
+            <p class="kicker">Espace enseignant</p>
+            <h1>Gestion des syllabes</h1>
+          </div>
+          <div class="teacher-header-actions">
+            <a id="teacherManagerBackToGame" class="back-link" href="index.html">Retour au jeu</a>
+          </div>
+        </header>
+
+        <section id="teacherDashboard" class="teacher-dashboard" aria-label="Tableau de bord enseignant">
+          <article class="teacher-dashboard-card">
+            <span>Total</span>
+            <strong id="dashboardTotalSyllables">0</strong>
+          </article>
+          <article class="teacher-dashboard-card">
+            <span>Actives</span>
+            <strong id="dashboardActiveSyllables">0</strong>
+          </article>
+          <article class="teacher-dashboard-card">
+            <span>Avec voix</span>
+            <strong id="dashboardRecordedSyllables">0</strong>
+          </article>
+          <article class="teacher-dashboard-card">
+            <span>Actives sans voix</span>
+            <strong id="dashboardActiveMissingAudio">0</strong>
+          </article>
+          <p id="teacherDashboardStatus" class="teacher-dashboard-status">Aucune syllabe active</p>
+          <div class="teacher-dashboard-actions" aria-label="Actions rapides enseignant">
+            <button id="dashboardActivateSyllables" class="audio-test-button" type="button">Activer des syllabes</button>
+            <button id="dashboardRecordMissingVoices" class="audio-test-button teacher-manager-main-button" type="button">Enregistrer les voix manquantes</button>
+            <button id="dashboardBackToGame" class="audio-test-button" type="button">Retour au jeu</button>
+          </div>
+        </section>
+
+        <section class="teacher-data-panel" aria-labelledby="teacherDataTitle">
+          <div>
+            <h2 id="teacherDataTitle">Données enseignante</h2>
+            <p>Exporter ou importer les réglages locaux sans les voix enregistrées.</p>
+          </div>
+          <div class="teacher-data-actions">
+            <button id="exportTeacherConfig" class="audio-test-button teacher-manager-main-button" type="button">Exporter la configuration</button>
+            <button id="importTeacherConfig" class="audio-test-button" type="button">Importer la configuration</button>
+            <input id="importTeacherConfigFile" type="file" accept="application/json,.json" hidden>
+          </div>
+        </section>
+
+        <nav class="teacher-manager-tabs" aria-label="Outils enseignant">
+          <button class="teacher-manager-tab active" type="button" data-tab="add">Ajouter</button>
+          <button class="teacher-manager-tab" type="button" data-tab="manage">Gérer</button>
+          <button class="teacher-manager-tab" type="button" data-tab="record">Enregistrer</button>
+          <button class="teacher-manager-tab" type="button" data-tab="rewards">Récompenses</button>
+        </nav>
+
+        <p id="teacherManagerMessage" class="teacher-syllables-message" aria-live="polite"></p>
+
+        <section id="teacherTabAdd" class="teacher-manager-section active" data-panel="add">
+          <div class="teacher-add-box">
+            <label class="teacher-syllables-search">
+              <span>Nouvelle syllabe</span>
+              <input id="managerNewSyllable" type="text" autocomplete="off" maxlength="12" placeholder="ée">
+            </label>
+            <button id="managerAddSyllable" class="audio-test-button teacher-manager-main-button" type="button">
+              Ajouter et enregistrer
+            </button>
+          </div>
+
+          <div class="teacher-record-focus compact">
+            <span class="target-label">Syllabe</span>
+            <strong id="addRecordSyllable" class="teacher-record-big">?</strong>
+            <div id="addRecordStatus" class="teacher-voice-status" data-state="synthetic">Voix synthétique</div>
+            <div class="teacher-record-actions">
+              <button id="addRecordStart" class="audio-test-button teacher-record-button" type="button">Enregistrer</button>
+              <button id="addRecordStop" class="audio-test-button teacher-stop-button" type="button" disabled>Stop</button>
+              <button id="addRecordPlay" class="audio-test-button teacher-play-button" type="button" disabled>Écouter</button>
+              <button id="addRecordRetry" class="audio-test-button teacher-retry-button" type="button" disabled>Recommencer</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="teacherTabManage" class="teacher-manager-section" data-panel="manage">
+          <div class="teacher-syllables-tools">
+            <p id="managerActiveCount" class="teacher-syllables-count">0 active / 0 total</p>
+            <div class="teacher-syllables-filters" role="group" aria-label="Filtrer les syllabes">
+              <button class="audio-test-button active" type="button" data-manage-filter="all">Toutes</button>
+              <button class="audio-test-button" type="button" data-manage-filter="active">Actives</button>
+              <button class="audio-test-button" type="button" data-manage-filter="inactive">Inactives</button>
+            </div>
+            <label class="teacher-syllables-search">
+              <span>Recherche</span>
+              <input id="managerSearch" type="search" autocomplete="off" placeholder="ma">
+            </label>
+            <button id="toggleLevelHelp" class="audio-test-button" type="button" aria-expanded="false">Voir les niveaux</button>
+          </div>
+          <section id="levelHelpPanel" class="teacher-level-help hidden" aria-label="Synthèse des niveaux"></section>
+          <section id="managerSyllableList" class="teacher-manager-list" aria-label="Liste des syllabes"></section>
+        </section>
+
+        <section id="teacherTabRecord" class="teacher-manager-section" data-panel="record">
+          <div class="teacher-record-toolbar">
+            <div class="teacher-syllables-filters" role="group" aria-label="Filtrer l'enregistrement">
+              <button class="audio-test-button active" type="button" data-record-filter="all">Toutes</button>
+              <button class="audio-test-button" type="button" data-record-filter="active">Actives</button>
+              <button class="audio-test-button" type="button" data-record-filter="missing">Sans audio</button>
+            </div>
+            <div class="teacher-record-nav">
+              <button id="recordPrevious" class="audio-test-button" type="button">Précédente</button>
+              <button id="recordNext" class="audio-test-button" type="button">Suivante</button>
+            </div>
+          </div>
+
+          <div class="teacher-record-focus">
+            <span id="recordPosition" class="target-label">0 / 0</span>
+            <strong id="recordSyllable" class="teacher-record-big">?</strong>
+            <div id="recordStatus" class="teacher-voice-status" data-state="synthetic">Voix synthétique</div>
+            <div class="teacher-record-actions">
+              <button id="recordStart" class="audio-test-button teacher-record-button" type="button">Enregistrer</button>
+              <button id="recordStop" class="audio-test-button teacher-stop-button" type="button" disabled>Stop</button>
+              <button id="recordPlay" class="audio-test-button teacher-play-button" type="button" disabled>Écouter</button>
+              <button id="recordRetry" class="audio-test-button teacher-retry-button" type="button" disabled>Recommencer</button>
+              <button id="recordDelete" class="audio-test-button teacher-delete-button" type="button" disabled>Supprimer audio</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="teacherTabRewards" class="teacher-manager-section" data-panel="rewards">
+          <p class="teacher-reward-help">
+            Pour ajouter de nouveaux fichiers, place les MP4 dans assets/videos/ et les MP3 dans assets/audio/rewards/, puis lance les scripts de mise à jour.
+          </p>
+          <div class="teacher-rewards-grid">
+            <section class="teacher-reward-section" aria-labelledby="teacherRewardVideosTitle">
+              <h2 id="teacherRewardVideosTitle">Vidéos</h2>
+              <div id="rewardVideoList" class="teacher-reward-list"></div>
+            </section>
+            <section class="teacher-reward-section" aria-labelledby="teacherRewardSoundsTitle">
+              <h2 id="teacherRewardSoundsTitle">Sons</h2>
+              <div id="rewardSoundList" class="teacher-reward-list"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="src/config.js"></script>
+    <script src="src/teacher-manager.js"></script>
+  </body>
+</html>
