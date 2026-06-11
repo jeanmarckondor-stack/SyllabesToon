@@ -48,6 +48,9 @@
     exportConfig: document.querySelector("#exportTeacherConfig"),
     importConfig: document.querySelector("#importTeacherConfig"),
     importConfigFile: document.querySelector("#importTeacherConfigFile"),
+    exportVoices: document.querySelector("#exportTeacherVoices"),
+    importVoices: document.querySelector("#importTeacherVoices"),
+    importVoicesFile: document.querySelector("#importTeacherVoicesFile"),
     tabs: Array.from(document.querySelectorAll("[data-tab]")),
     panels: Array.from(document.querySelectorAll("[data-panel]")),
     newSyllable: document.querySelector("#managerNewSyllable"),
@@ -183,6 +186,9 @@
     elements.exportConfig.addEventListener("click", exportTeacherConfig);
     elements.importConfig.addEventListener("click", () => elements.importConfigFile.click());
     elements.importConfigFile.addEventListener("change", importTeacherConfig);
+    elements.exportVoices.addEventListener("click", exportTeacherVoices);
+    elements.importVoices.addEventListener("click", () => elements.importVoicesFile.click());
+    elements.importVoicesFile.addEventListener("change", importTeacherVoices);
 
     elements.tabs.forEach((button) => {
       button.addEventListener("click", () => selectTab(button.dataset.tab));
@@ -342,15 +348,7 @@
       rewardVideoLevels: readRewardVideoLevelMap(),
       activeRewardSounds: [...getActiveRewardFiles("sound")],
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "syllabestoon-config.json";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+    downloadJson("syllabestoon-config.json", payload);
     showMessage("Export réussi.");
   }
 
@@ -417,6 +415,115 @@
     config.setActiveRewardVideos(nextConfig.activeRewardVideos);
     config.setActiveRewardSounds(nextConfig.activeRewardSounds);
     window.localStorage.setItem(rewardVideoLevelsStorageKey, JSON.stringify(nextConfig.rewardVideoLevels));
+  }
+
+  async function exportTeacherVoices() {
+    const syllables = await listRecordedTeacherSyllables().catch(() => []);
+    if (!syllables.length) {
+      showMessage("Aucune voix à exporter.");
+      return;
+    }
+
+    const voices = [];
+    for (const syllable of syllables) {
+      const blob = await getTeacherSyllableAudio(syllable).catch(() => null);
+      if (blob) {
+        voices.push({
+          syllable,
+          mimeType: blob.type || "audio/webm",
+          dataBase64: await blobToBase64(blob),
+        });
+      }
+    }
+
+    if (!voices.length) {
+      showMessage("Aucune voix à exporter.");
+      return;
+    }
+
+    const payload = {
+      exportVersion: 1,
+      exportedAt: new Date().toISOString(),
+      voices,
+    };
+    downloadJson("syllabestoon-voices.json", payload);
+    showMessage("Export voix réussi.");
+  }
+
+  async function importTeacherVoices() {
+    const file = elements.importVoicesFile.files?.[0];
+    elements.importVoicesFile.value = "";
+    if (!file) {
+      return;
+    }
+
+    try {
+      const payload = JSON.parse(await file.text());
+      const voices = validateTeacherVoicesPayload(payload);
+      for (const voice of voices) {
+        await saveTeacherSyllableAudio(voice.syllable, base64ToBlob(voice.dataBase64, voice.mimeType));
+      }
+
+      await refreshState();
+      renderAll();
+      showMessage("Import voix réussi.");
+    } catch {
+      showMessage("Fichier invalide.");
+    }
+  }
+
+  function validateTeacherVoicesPayload(payload) {
+    if (!payload || typeof payload !== "object" || payload.exportVersion !== 1 || !Array.isArray(payload.voices)) {
+      throw new Error("Invalid voices file.");
+    }
+
+    return payload.voices.map((voice) => {
+      if (!voice || typeof voice !== "object") {
+        throw new Error("Invalid voice entry.");
+      }
+
+      const syllable = String(voice.syllable || "").trim();
+      const mimeType = String(voice.mimeType || "audio/webm").trim();
+      const dataBase64 = String(voice.dataBase64 || "").trim();
+      if (!syllable || !dataBase64) {
+        throw new Error("Invalid voice content.");
+      }
+
+      return { syllable, mimeType, dataBase64 };
+    });
+  }
+
+  function downloadJson(filename, payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        const result = String(reader.result || "");
+        resolve(result.includes(",") ? result.split(",").pop() : result);
+      });
+      reader.addEventListener("error", () => reject(reader.error));
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function base64ToBlob(dataBase64, mimeType) {
+    const binary = window.atob(dataBase64);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    return new Blob([bytes], { type: mimeType || "audio/webm" });
   }
 
   function renderAdd() {
