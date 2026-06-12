@@ -36,6 +36,24 @@ Valider le cahier des charges, puis choisir la stack technique et construire un 
 
 Depuis la racine du projet:
 
+Lancement recommande sur PC de developpement:
+
+```bash
+start-syllabestoon.bat
+```
+
+Ce lanceur requiert encore Node.js sur le PC. La version enseignante portable sans Node viendra dans une prochaine etape.
+
+Commande directe equivalente:
+
+```bash
+node scripts/serve.js
+```
+
+Cette commande regenere automatiquement `assets/videos/videos.json` et `assets/audio/rewards/sounds.json` avant de lancer le serveur local.
+
+Fallback de developpement:
+
 ```bash
 python -m http.server 8000
 ```
@@ -49,6 +67,41 @@ Espace enseignant unique:
 PIN temporaire enseignant: `1234`
 
 Les anciennes pages enseignant `teacher-syllables.html` et `teacher-voice.html` ont ete supprimees. Toutes les actions enseignant passent par `teacher-manager.html`.
+
+## Version portable enseignante
+
+Le dossier `portable/` prepare la future version Windows sans installation de Node ni Python.
+
+Il contient pour l'instant:
+
+- `Lancer SyllabesToon.bat`: lanceur double-clic prevu pour l'enseignante.
+- `README_ENSEIGNANTE.txt`: notice courte d'utilisation.
+
+`server.exe` n'est pas encore fourni dans cette slice. Il faudra choisir puis ajouter un petit serveur Windows portable dans `portable/` avant de creer un dossier transmissible a l'enseignante.
+
+## Compiler le serveur portable
+
+Prerequis sur le PC de developpement uniquement: Go.
+
+Compiler le mini serveur Windows:
+
+```bash
+go build -o portable/server.exe ./tools/server
+```
+
+Le PC de l'enseignante n'a pas besoin de Go. Il utilisera seulement `portable/server.exe` avec `portable/Lancer SyllabesToon.bat`.
+
+Preparer le dossier portable complet:
+
+```bash
+node scripts/prepare-portable.js
+```
+
+Ordre recommande avant transfert:
+
+1. Compiler `portable/server.exe`.
+2. Lancer `node scripts/prepare-portable.js`.
+3. Zipper le dossier `portable/`.
 
 ## Donnees locales
 

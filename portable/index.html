@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SyllabesToon</title>
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body class="theme-candy">
+    <main class="app-shell">
+      <section class="game-stage" aria-label="Jeu Nuage des Syllabes">
+        <div class="sky-decoration" aria-hidden="true">
+          <span class="burst burst-a"></span>
+          <span class="burst burst-b"></span>
+          <span class="sun"></span>
+          <span class="cloud cloud-a"></span>
+          <span class="cloud cloud-b"></span>
+          <span class="rainbow"></span>
+          <span class="hill hill-a"></span>
+          <span class="hill hill-b"></span>
+        </div>
+
+        <header class="top-bar">
+          <div>
+            <p class="kicker">SyllabesToon</p>
+            <h1>Le nuage des syllabes</h1>
+          </div>
+          <div class="toolbar">
+            <div class="style-picker" aria-label="Choisir le style visuel">
+              <button class="style-button active" type="button" data-theme="theme-candy">Candy</button>
+              <button class="style-button" type="button" data-theme="theme-toon">Toon</button>
+              <button class="style-button" type="button" data-theme="theme-manga">Manga</button>
+              <button id="openProgress" class="style-button" type="button">Suivi</button>
+              <a class="style-button teacher-link" href="teacher-manager.html">Espace enseignant</a>
+            </div>
+            <div id="levelPicker" class="level-picker" aria-label="Choisir un niveau"></div>
+            <p id="levelName" class="level-name">Niveau 1 - Découverte</p>
+          </div>
+        </header>
+
+        <section class="prompt-panel" aria-live="polite">
+          <div class="mascot-wrap" aria-hidden="true">
+            <img class="mascot" src="assets/images/mascot.png" alt="">
+            <div class="student-sign">
+              <img class="student-sign-art" src="assets/images/student-sign.png" alt="">
+              <div class="student-sign-text">
+                <span>Pour</span>
+                <strong id="studentSignName">toi</strong>
+              </div>
+            </div>
+          </div>
+          <div class="target-card">
+            <span class="target-label">Trouve</span>
+            <strong id="targetSyllable">?</strong>
+          </div>
+          <button id="playSound" class="sound-button" type="button" aria-label="Rejouer la syllabe">
+            <span class="sound-icon" aria-hidden="true">▶</span>
+            <span>Écouter</span>
+          </button>
+        </section>
+
+        <section id="cloudBoard" class="cloud-board" aria-label="Nuage de syllabes"></section>
+
+        <footer class="status-bar">
+          <p id="feedbackText">Écoute bien, puis clique sur la bonne syllabe.</p>
+          <div id="rewardBadge" class="reward-badge" aria-hidden="true">Super !</div>
+          <div class="progress" aria-label="Progression">
+            <span id="foundCount">0</span>
+            <span>/</span>
+            <span id="goalCount">1</span>
+          </div>
+          <button id="nextRound" class="next-button" type="button">Nouvelle bulle</button>
+        </footer>
+
+        <section id="startOverlay" class="start-overlay" aria-label="Démarrer la séance">
+          <div class="start-panel">
+            <img class="start-mascot" src="assets/images/mascot.png" alt="" aria-hidden="true">
+            <div class="start-content">
+              <p class="kicker">Bienvenue</p>
+              <h2>Qui joue aujourd'hui ?</h2>
+              <label for="studentName">Prénom de l'élève</label>
+              <input id="studentName" type="text" autocomplete="off" maxlength="24" placeholder="Prénom">
+              <button id="startGame" class="start-button" type="button">Commencer</button>
+            </div>
+          </div>
+        </section>
+
+        <aside id="progressPanel" class="progress-panel hidden" aria-label="Suivi local des séances">
+          <div class="progress-card">
+            <header class="progress-header">
+              <div>
+                <p class="kicker">Suivi local</p>
+                <h2>Dernières séances</h2>
+              </div>
+              <button id="closeProgress" class="panel-icon-button" type="button" aria-label="Fermer le suivi">×</button>
+            </header>
+            <div id="progressSummary" class="progress-summary"></div>
+            <div id="progressDetails" class="progress-details"></div>
+            <button id="clearProgress" class="clear-progress-button" type="button">Effacer le suivi local</button>
+          </div>
+        </aside>
+
+        <section id="rewardOverlay" class="reward-overlay hidden" aria-label="Récompense gagnée">
+          <div class="reward-scene">
+            <button id="closeReward" class="panel-icon-button reward-close" type="button" aria-label="Fermer la récompense">×</button>
+            <img class="reward-capsule" src="assets/images/reward-capsule.png" alt="" aria-hidden="true">
+            <div id="rewardAnimation" class="reward-animation" aria-hidden="true"></div>
+            <p id="rewardTitle" class="reward-title">Une surprise !</p>
+            <p id="rewardMessage" class="reward-message">Regarde ce qui arrive !</p>
+            <button id="continueReward" class="start-button reward-continue" type="button">Continuer</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="src/config.js"></script>
+    <script src="src/audio.js"></script>
+    <script src="src/storage.js"></script>
+    <script src="src/app.js"></script>
+  </body>
+</html>
