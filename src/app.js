@@ -12,6 +12,9 @@ const state = {
   completed: false,
   studentName: "toi",
   started: false,
+  consecutiveSuccesses: 0,
+  roundHadMistake: false,
+  recentRewardVideos: [],
   targetHistoryByLevel: {},
   targetQueuesByLevel: {},
 };
@@ -143,6 +146,7 @@ function createRound() {
   state.goal = level.targets;
   state.found = 0;
   state.mistakes = 0;
+  state.roundHadMistake = false;
   state.completed = false;
 
   targetSyllable.textContent = level.showTarget ? state.target : "?";
@@ -270,6 +274,10 @@ function handleCardClick(button) {
   }
 
   button.classList.add("soft-miss");
+  if (!state.roundHadMistake) {
+    state.consecutiveSuccesses = 0;
+    state.roundHadMistake = true;
+  }
   feedbackText.textContent = sample(config.gentleHelps);
   animateMascot("help");
   maybeShowHint();
@@ -307,15 +315,33 @@ function maybeShowHint() {
 
 function completeRound() {
   state.completed = true;
+  state.consecutiveSuccesses = state.roundHadMistake ? 0 : state.consecutiveSuccesses + 1;
   recordCompletedRound();
   feedbackText.textContent = `${state.studentName}, ${formatMessage(sample(config.completionMessages)).toLowerCase()}`;
   showRewardBadge();
-  showCelebrationReward();
+  maybeShowMajorReward();
   animateMascot("celebrate");
   nextRoundButton.disabled = false;
   board.classList.add("celebrate");
   speak("Bravo, tu as réussi");
   setTimeout(() => board.classList.remove("celebrate"), 1400);
+}
+
+function shouldShowMajorReward() {
+  return state.consecutiveSuccesses > 0 && state.consecutiveSuccesses % 5 === 0;
+}
+
+function maybeShowMajorReward() {
+  const shouldShow = shouldShowMajorReward();
+  console.log("reward gate", {
+    roundHadMistake: state.roundHadMistake,
+    consecutiveSuccesses: state.consecutiveSuccesses,
+    shouldShowMajorReward: shouldShow,
+  });
+
+  if (shouldShow) {
+    showMajorReward();
+  }
 }
 
 function getCorrectMessage() {
@@ -356,18 +382,39 @@ function showRewardBadge() {
   });
 }
 
-async function showCelebrationReward() {
+async function showMajorReward() {
+  if (!shouldShowMajorReward()) {
+    console.warn("[syllabestoon] blocked major reward outside reward gate", {
+      roundHadMistake: state.roundHadMistake,
+      consecutiveSuccesses: state.consecutiveSuccesses,
+    });
+    return;
+  }
+
   const levelIndex = state.levelIndex;
   const [rewards, sounds] = await Promise.all([
     getRewardsForLevel(levelIndex),
     getRewardSoundsForLevel(levelIndex),
   ]);
-  const reward = sample(rewards);
+  const reward = selectRewardVideo(rewards);
+  if (!reward) {
+    console.info("[syllabestoon] selected reward video", {
+      levelIndex,
+      file: null,
+      source: "none",
+    });
+    return;
+  }
+
   const sound = sample(sounds);
   console.info("[syllabestoon] selected reward video", {
     levelIndex,
     file: reward.file || reward.video,
     source: reward.source || "unknown",
+  });
+  console.log("MAJOR REWARD SHOWN", {
+    consecutiveSuccesses: state.consecutiveSuccesses,
+    file: reward.file || reward.video,
   });
   rewardAnimation.className = `reward-animation ${reward.className}`;
   rewardAnimation.innerHTML = "";
@@ -379,6 +426,29 @@ async function showCelebrationReward() {
   if (reward.tone) {
     window.SyllabesToonAudio.playRewardTone(reward.tone);
   }
+}
+
+function selectRewardVideo(rewards) {
+  const candidates = Array.isArray(rewards) ? rewards.filter(Boolean) : [];
+  console.info("[syllabestoon] reward candidates", candidates.map((reward) => reward.file || reward.video));
+  console.info("[syllabestoon] recent reward videos", state.recentRewardVideos);
+
+  if (!candidates.length) {
+    return null;
+  }
+
+  const recent = new Set(state.recentRewardVideos.slice(-3));
+  const freshCandidates = candidates.length > 3
+    ? candidates.filter((reward) => !recent.has(reward.file || reward.video))
+    : candidates;
+  const selected = sample(freshCandidates.length ? freshCandidates : candidates);
+  const selectedFile = selected.file || selected.video;
+
+  if (selectedFile) {
+    state.recentRewardVideos = [...state.recentRewardVideos, selectedFile].slice(-3);
+  }
+
+  return selected;
 }
 
 function getAvailableVideos() {

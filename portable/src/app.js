@@ -12,6 +12,8 @@ const state = {
   completed: false,
   studentName: "toi",
   started: false,
+  consecutiveSuccesses: 0,
+  recentRewardVideos: [],
   targetHistoryByLevel: {},
   targetQueuesByLevel: {},
 };
@@ -270,6 +272,9 @@ function handleCardClick(button) {
   }
 
   button.classList.add("soft-miss");
+  if (!state.mistakes) {
+    state.consecutiveSuccesses = 0;
+  }
   feedbackText.textContent = sample(config.gentleHelps);
   animateMascot("help");
   maybeShowHint();
@@ -307,15 +312,30 @@ function maybeShowHint() {
 
 function completeRound() {
   state.completed = true;
+  state.consecutiveSuccesses = state.mistakes ? 0 : state.consecutiveSuccesses + 1;
   recordCompletedRound();
   feedbackText.textContent = `${state.studentName}, ${formatMessage(sample(config.completionMessages)).toLowerCase()}`;
   showRewardBadge();
-  showCelebrationReward();
+  maybeShowMajorReward();
   animateMascot("celebrate");
   nextRoundButton.disabled = false;
   board.classList.add("celebrate");
   speak("Bravo, tu as réussi");
   setTimeout(() => board.classList.remove("celebrate"), 1400);
+}
+
+function shouldShowMajorReward() {
+  return state.consecutiveSuccesses > 0 && state.consecutiveSuccesses % 5 === 0;
+}
+
+function maybeShowMajorReward() {
+  const shouldShow = shouldShowMajorReward();
+  console.info("[syllabestoon] consecutive successes", state.consecutiveSuccesses);
+  console.info("[syllabestoon] should show major reward", shouldShow);
+
+  if (shouldShow) {
+    showMajorReward();
+  }
 }
 
 function getCorrectMessage() {
@@ -356,13 +376,22 @@ function showRewardBadge() {
   });
 }
 
-async function showCelebrationReward() {
+async function showMajorReward() {
   const levelIndex = state.levelIndex;
   const [rewards, sounds] = await Promise.all([
     getRewardsForLevel(levelIndex),
     getRewardSoundsForLevel(levelIndex),
   ]);
-  const reward = sample(rewards);
+  const reward = selectRewardVideo(rewards);
+  if (!reward) {
+    console.info("[syllabestoon] selected reward video", {
+      levelIndex,
+      file: null,
+      source: "none",
+    });
+    return;
+  }
+
   const sound = sample(sounds);
   console.info("[syllabestoon] selected reward video", {
     levelIndex,
@@ -379,6 +408,29 @@ async function showCelebrationReward() {
   if (reward.tone) {
     window.SyllabesToonAudio.playRewardTone(reward.tone);
   }
+}
+
+function selectRewardVideo(rewards) {
+  const candidates = Array.isArray(rewards) ? rewards.filter(Boolean) : [];
+  console.info("[syllabestoon] reward candidates", candidates.map((reward) => reward.file || reward.video));
+  console.info("[syllabestoon] recent reward videos", state.recentRewardVideos);
+
+  if (!candidates.length) {
+    return null;
+  }
+
+  const recent = new Set(state.recentRewardVideos.slice(-3));
+  const freshCandidates = candidates.length > 3
+    ? candidates.filter((reward) => !recent.has(reward.file || reward.video))
+    : candidates;
+  const selected = sample(freshCandidates.length ? freshCandidates : candidates);
+  const selectedFile = selected.file || selected.video;
+
+  if (selectedFile) {
+    state.recentRewardVideos = [...state.recentRewardVideos, selectedFile].slice(-3);
+  }
+
+  return selected;
 }
 
 function getAvailableVideos() {
