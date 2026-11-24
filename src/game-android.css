@@ -1,0 +1,372 @@
+/* Loaded only by the Android build. Capacitor provides any unconsumed system bar insets. */
+body {
+  min-height: 0;
+}
+
+.app-shell {
+  --game-gutter: 8px;
+  height: 100dvh;
+  min-height: 0;
+  padding:
+    calc(var(--game-gutter) + max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px)))
+    calc(var(--game-gutter) + max(env(safe-area-inset-right, 0px), var(--safe-area-inset-right, 0px)))
+    calc(var(--game-gutter) + max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px)))
+    calc(var(--game-gutter) + max(env(safe-area-inset-left, 0px), var(--safe-area-inset-left, 0px)));
+}
+
+.game-stage {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  border-width: 4px;
+  border-radius: 22px;
+  box-shadow: none;
+}
+
+.top-bar {
+  display: grid;
+  grid-template-areas:
+    "title styles"
+    "level levels";
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 14px 6px;
+}
+
+.top-bar > :first-child {
+  grid-area: title;
+}
+
+.top-bar .kicker {
+  display: none;
+}
+
+.top-bar h1 {
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.game-title-line .reward-progress-stars {
+  --progress-star-size: 40px;
+}
+
+.has-prepared-session .game-title-line h1 {
+  font-size: 24px;
+}
+
+@media (orientation: landscape) and (min-width: 1100px), (orientation: portrait) and (min-width: 750px) {
+  .has-prepared-session .game-heading {
+    flex-wrap: nowrap;
+  }
+
+  .has-prepared-session .game-title-line {
+    flex: 1 1 auto;
+  }
+
+  .has-prepared-session .game-title-line h1 {
+    font-size: 22px;
+    line-height: 1.05;
+  }
+
+  .has-prepared-session .prepared-session-controls {
+    flex: none;
+  }
+}
+
+.toolbar {
+  display: contents;
+}
+
+.style-picker {
+  grid-area: styles;
+  gap: 6px;
+}
+
+.style-button {
+  min-width: 48px;
+  min-height: 48px;
+  padding-inline: 10px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.level-picker {
+  grid-area: levels;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(48px, 1fr));
+  gap: 5px;
+  max-width: none;
+}
+
+.level-button {
+  width: 100%;
+  min-width: 48px;
+  height: 48px;
+  font-size: 18px;
+}
+
+.level-name {
+  grid-area: level;
+  min-width: 0;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.prompt-panel {
+  grid-template-columns: auto minmax(0, 260px) auto;
+  align-items: center;
+  justify-items: stretch;
+  gap: 16px;
+  padding: 4px 14px 6px;
+}
+
+.mascot-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  transform: none;
+  animation: none;
+}
+
+.mascot {
+  position: static;
+  width: 78px;
+  height: 78px;
+  margin: 0;
+  filter: drop-shadow(0 3px 5px rgba(37, 49, 79, 0.28));
+}
+
+.student-sign, .student-sign-text {
+  position: static;
+  width: auto;
+  height: auto;
+  transform: none;
+}
+
+.student-sign {
+  max-width: 112px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #fffaf2;
+}
+
+.student-sign-art, .student-sign::after {
+  display: none;
+}
+
+.student-sign-text strong {
+  font-size: 17px;
+}
+
+.target-card {
+  min-height: 62px;
+  padding: 4px 12px;
+  border-width: 4px;
+  border-radius: 22px;
+  box-shadow: 0 5px 0 rgba(37, 49, 79, 0.17);
+  transform: none;
+}
+
+.target-card .target-label {
+  font-size: 15px;
+}
+
+.target-card strong {
+  max-width: 100%;
+  font-size: 42px;
+  line-height: 1;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.sound-button, .next-button {
+  width: auto;
+  min-height: 48px;
+  padding-inline: 12px;
+  font-size: 18px;
+}
+
+.sound-icon {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+}
+
+/* The board uses the remaining height and shares it between its implicit rows. */
+.game-stage .cloud-board {
+  --columns: 4;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  width: 100%;
+  max-width: 1000px;
+  min-height: 0;
+  gap: 14px;
+  padding: 8px 16px 12px;
+}
+
+.game-stage .cloud-board.count-3,
+.game-stage .cloud-board.count-6 {
+  --columns: 3;
+}
+
+.game-stage .syllable-card {
+  align-self: center;
+  justify-self: stretch;
+  flex-wrap: wrap;
+  align-content: center;
+  height: 100%;
+  min-height: 48px;
+  max-height: 145px;
+  min-width: 0;
+  padding: 8px;
+  font-size: 48px;
+  transform: rotate(clamp(-2deg, var(--rotate, 0deg), 2deg));
+}
+
+.game-stage .syllable-card.found {
+  transform: scale(0.94);
+}
+
+.game-stage .syllable-card:has(.toon-letter:nth-child(5)) {
+  font-size: 30px;
+}
+
+/* Preserve feedback without growing into adjacent cells. */
+.game-stage .syllable-card.soft-miss,
+.game-stage .syllable-card.hint,
+.game-stage .celebrate .syllable-card.found {
+  animation-name: android-card-feedback;
+}
+
+@keyframes android-card-feedback {
+  50% { filter: brightness(1.24); }
+}
+
+.status-bar {
+  grid-template-columns: minmax(0, 1fr) 84px 68px auto;
+  gap: 8px;
+  padding: 4px 14px 12px;
+}
+
+#feedbackText {
+  min-height: 48px;
+  padding: 7px 10px;
+  border-width: 3px;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.status-bar .progress, .status-bar .reward-badge {
+  width: 100%;
+  height: 48px;
+  border-width: 3px;
+  font-size: 18px;
+}
+
+.status-bar .reward-badge {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.start-overlay, .progress-panel, .reward-overlay {
+  place-items: safe center;
+  overflow: auto;
+}
+
+.start-panel, .progress-card, .reward-scene {
+  max-width: 100%;
+}
+
+@media (orientation: portrait) {
+  .top-bar {
+    grid-template-areas: "title" "styles" "levels" "level";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .game-title-line {
+    justify-content: center;
+  }
+
+  .top-bar h1 {
+    text-align: center;
+  }
+
+  .style-picker {
+    justify-content: center;
+  }
+
+  .game-stage .cloud-board {
+    --columns: 3;
+    max-width: 760px;
+  }
+
+  .game-stage .cloud-board.count-4 {
+    --columns: 2;
+  }
+
+  .status-bar {
+    grid-template-columns: minmax(0, 1fr) 84px 62px auto;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 900px) {
+  .top-bar h1 {
+    font-size: 23px;
+  }
+
+  .game-title-line .reward-progress-stars {
+    --progress-star-size: 22px;
+    gap: 3px;
+  }
+
+  .level-picker {
+    grid-template-columns: repeat(10, 48px);
+  }
+
+  .mascot {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+@media (orientation: portrait) and (max-width: 560px) {
+  .game-title-line .reward-progress-stars {
+    --progress-star-size: 23px;
+  }
+
+  .level-picker {
+    grid-template-columns: repeat(5, minmax(48px, 1fr));
+  }
+
+  .prompt-panel {
+    gap: 8px;
+  }
+
+  .mascot {
+    width: 54px;
+    height: 54px;
+  }
+
+  .student-sign {
+    display: none;
+  }
+
+  .game-stage .syllable-card {
+    font-size: 38px;
+  }
+
+  .status-bar {
+    grid-template-columns: minmax(76px, 1fr) minmax(54px, 1fr) auto;
+  }
+
+  #feedbackText {
+    grid-column: 1 / -1;
+  }
+}

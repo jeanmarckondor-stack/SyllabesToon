@@ -29,7 +29,7 @@ func main() {
 		log.Fatalf("root n'est pas un dossier: %s", rootPath)
 	}
 
-	address := "localhost:" + *port
+	address := "127.0.0.1:" + *port
 	fmt.Println("SyllabesToon server")
 	fmt.Println("root:", rootPath)
 	fmt.Printf("http://localhost:%s/index.html\n", *port)

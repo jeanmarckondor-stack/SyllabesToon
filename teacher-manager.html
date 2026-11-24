@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SyllabesToon - espace enseignant</title>
     <link rel="stylesheet" href="src/styles.css">
+    <link rel="stylesheet" href="src/space-bonus.css">
+    <link rel="stylesheet" href="src/candy-maze.css">
+    <link rel="stylesheet" href="src/turbo-bike.css">
+    <link rel="stylesheet" href="src/funny-golf.css">
+    <link rel="stylesheet" href="src/parkour.css">
   </head>
   <body class="theme-candy teacher-pin-locked">
     <main class="audio-check-shell">
@@ -74,6 +79,8 @@
         </section>
 
         <nav class="teacher-manager-tabs" aria-label="Outils enseignant">
+          <button class="teacher-manager-tab" type="button" data-tab="prepare">Préparer une séance</button>
+          <button class="teacher-manager-tab" type="button" data-tab="parkours">Parkours</button>
           <button class="teacher-manager-tab active" type="button" data-tab="add">Ajouter</button>
           <button class="teacher-manager-tab" type="button" data-tab="manage">Gérer</button>
           <button class="teacher-manager-tab" type="button" data-tab="record">Enregistrer</button>
@@ -81,6 +88,45 @@
         </nav>
 
         <p id="teacherManagerMessage" class="teacher-syllables-message" aria-live="polite"></p>
+
+        <section class="teacher-manager-section" data-panel="prepare" aria-labelledby="prepareSessionTitle">
+          <h2 id="prepareSessionTitle" tabindex="-1">Préparer une séance</h2>
+          <div class="teacher-prepare-controls">
+            <div>
+              <p id="prepareSessionCount" class="teacher-syllables-count" aria-live="polite"></p>
+              <p id="prepareSessionStatus" role="status"></p>
+            </div>
+            <label class="teacher-prepare-level">
+              Niveau de départ
+              <select id="prepareSessionLevel" disabled></select>
+            </label>
+            <button id="launchPreparedSession" class="audio-test-button teacher-manager-main-button" type="button" disabled>Lancer la séance</button>
+          </div>
+          <fieldset class="teacher-prepare-fieldset">
+            <legend>Syllabes actives</legend>
+            <div id="prepareSessionSyllables" class="teacher-prepare-grid"></div>
+          </fieldset>
+        </section>
+
+        <section id="teacherTabParkours" class="teacher-manager-section" data-panel="parkours" aria-labelledby="parkourEditorTitle">
+          <div class="parkour-editor-heading">
+            <h2 id="parkourEditorTitle" tabindex="-1">Parkours</h2>
+            <button id="newParkour" class="audio-test-button" type="button">Nouveau Parkour</button>
+          </div>
+          <ul id="parkourList" class="parkour-editor-list"></ul>
+          <form id="parkourEditorForm" class="parkour-editor-form">
+            <div class="parkour-editor-fields">
+              <label>Prénom de l’enfant <input id="parkourName" type="text" maxlength="24" autocomplete="off" required></label>
+              <label>Syllabe prioritaire <select id="parkourPriority"></select></label>
+              <label>Nombre de blocs <input id="parkourBlockCount" type="number" min="1" step="1" value="1" required></label>
+            </div>
+            <div id="parkourBlocks"></div>
+            <div class="parkour-editor-actions">
+              <button class="audio-test-button teacher-manager-main-button" type="submit">Enregistrer le Parkour</button>
+              <p id="parkourEditorStatus" role="status"></p>
+            </div>
+          </form>
+        </section>
 
         <section id="teacherTabAdd" class="teacher-manager-section active" data-panel="add">
           <div class="teacher-add-box">
@@ -152,12 +198,16 @@
         </section>
 
         <section id="teacherTabRewards" class="teacher-manager-section" data-panel="rewards">
+          <button id="openBonusGallery" class="audio-test-button teacher-bonus-gallery-open" type="button" aria-haspopup="dialog">Voir les mini-jeux</button>
           <p class="teacher-reward-help">
             Pour ajouter de nouveaux fichiers, place les MP4 dans assets/videos/ et les MP3 dans assets/audio/rewards/, puis lance les scripts de mise à jour.
           </p>
           <div class="teacher-rewards-grid">
             <section class="teacher-reward-section" aria-labelledby="teacherRewardVideosTitle">
-              <h2 id="teacherRewardVideosTitle">Vidéos</h2>
+              <div class="teacher-reward-header">
+                <h2 id="teacherRewardVideosTitle">Vidéos</h2>
+                <button id="openRewardGallery" class="audio-test-button" type="button" aria-haspopup="dialog">Voir les vidéos</button>
+              </div>
               <div id="rewardVideoList" class="teacher-reward-list"></div>
             </section>
             <section class="teacher-reward-section" aria-labelledby="teacherRewardSoundsTitle">
@@ -166,10 +216,39 @@
             </section>
           </div>
         </section>
+        <dialog id="bonusGallery" class="teacher-gallery teacher-bonus-gallery" aria-labelledby="bonusGalleryTitle">
+          <header class="teacher-gallery-header">
+            <h2 id="bonusGalleryTitle">Mini-jeux bonus</h2>
+            <button class="audio-test-button" type="button" autofocus>Fermer</button>
+          </header>
+          <ul id="bonusGalleryList" class="teacher-bonus-list"></ul>
+        </dialog>
+        <dialog id="rewardGallery" class="teacher-gallery" aria-labelledby="rewardGalleryTitle">
+          <header class="teacher-gallery-header">
+            <h2 id="rewardGalleryTitle">Vidéos de récompense</h2>
+            <button id="closeRewardGallery" class="audio-test-button" type="button" autofocus>Fermer</button>
+          </header>
+          <div class="teacher-gallery-content">
+            <div id="rewardGalleryList" class="teacher-gallery-list" role="group" aria-label="Catalogue vidéo"></div>
+            <div class="teacher-gallery-player">
+              <p id="rewardGallerySelection" role="status">Aucune vidéo sélectionnée.</p>
+              <video id="rewardGalleryVideo" controls playsinline preload="none" aria-label="Aperçu de la vidéo de récompense"></video>
+            </div>
+          </div>
+        </dialog>
       </section>
     </main>
 
     <script src="src/config.js"></script>
+    <script src="src/prepared-session.js"></script>
+    <script src="src/parkour.js"></script>
+    <script src="src/audio.js"></script>
+    <script src="src/space-bonus.js"></script>
+    <script src="src/candy-maze.js"></script>
+    <script src="src/turbo-bike.js"></script>
+    <script src="src/funny-golf.js"></script>
+    <script src="src/bonus-games.js"></script>
+    <script src="src/parkour-editor.js"></script>
     <script src="src/teacher-manager.js"></script>
   </body>
 </html>

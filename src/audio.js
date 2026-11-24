@@ -2,6 +2,7 @@ window.SyllabesToonAudio = (() => {
   const audioCache = new Map();
   const TEACHER_VOICE_DB = "syllabestoon.teacherVoice.v1";
   const TEACHER_VOICE_STORE = "syllableAudio";
+  let progressChimeContext = null;
 
   function buildCandidates(syllable, config) {
     return config.audio.extensions.map((extension) => {
@@ -176,6 +177,8 @@ window.SyllabesToonAudio = (() => {
     }
 
     const context = new AudioContextClass();
+    const isProgressChime = kind === "progress";
+    if (isProgressChime) progressChimeContext = context;
     const now = context.currentTime;
     const patterns = {
       sparkle: [523.25, 659.25, 783.99, 1046.5],
@@ -188,19 +191,20 @@ window.SyllabesToonAudio = (() => {
       candy: [659.25, 783.99, 880, 783.99, 1046.5],
       drum: [146.83, 146.83, 220, 146.83, 329.63],
       spotlight: [261.63, 392, 523.25, 659.25],
+      progress: [659.25, 783.99, 987.77],
     };
     const notes = patterns[kind] || patterns.sparkle;
 
     notes.forEach((frequency, index) => {
       const oscillator = context.createOscillator();
       const gain = context.createGain();
-      const start = now + index * 0.11;
-      const duration = 0.16;
+      const start = now + index * (isProgressChime ? 0.08 : 0.11);
+      const duration = isProgressChime ? 0.12 : 0.16;
 
-      oscillator.type = kind === "drum" ? "square" : (index % 2 === 0 ? "sine" : "triangle");
+      oscillator.type = kind === "drum" ? "square" : (isProgressChime || index % 2 === 0 ? "sine" : "triangle");
       oscillator.frequency.setValueAtTime(frequency, start);
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.08, start + 0.018);
+      gain.gain.exponentialRampToValueAtTime(isProgressChime ? 0.035 : 0.08, start + 0.018);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
 
       oscillator.connect(gain);
@@ -209,7 +213,25 @@ window.SyllabesToonAudio = (() => {
       oscillator.stop(start + duration + 0.02);
     });
 
-    window.setTimeout(() => context.close(), 900);
+    window.setTimeout(() => {
+      if (progressChimeContext === context) progressChimeContext = null;
+      if (context.state !== "closed") context.close().catch(() => {});
+    }, isProgressChime ? 320 : 900);
+  }
+
+  function stopProgressChime() {
+    const context = progressChimeContext;
+    progressChimeContext = null;
+    if (context && context.state !== "closed") context.close().catch(() => {});
+  }
+
+  function playProgressChime() {
+    stopProgressChime();
+    try {
+      playRewardTone("progress");
+    } catch {
+      stopProgressChime();
+    }
   }
 
   return {
@@ -218,6 +240,8 @@ window.SyllabesToonAudio = (() => {
     playRecordedOrSpeak,
     playTeacherSyllableAudio,
     playRewardTone,
+    playProgressChime,
+    stopProgressChime,
     speak,
   };
 })();

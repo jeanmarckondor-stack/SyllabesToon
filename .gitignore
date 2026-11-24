@@ -15,3 +15,10 @@ temp/
 node_modules/
 dist/
 build/
+
+# Generated packages and packaging scratch files
+*.apk
+*.aab
+/SyllabesToon-Linux.zip
+/SyllabesToon-Windows.zip
+/.SyllabesToon-Linux-*.tmp

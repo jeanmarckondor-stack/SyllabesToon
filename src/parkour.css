@@ -1,0 +1,229 @@
+.parkour-start-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.parkour-start-choices .start-button {
+  min-height: 58px;
+  padding: 5px 10px;
+  font-size: 19px;
+}
+
+.parkour-start-choices .start-button:only-child,
+.parkour-start-choices:has(#startParkour[hidden]) #startGame {
+  grid-column: 1 / -1;
+}
+
+#startParkour {
+  color: #fff;
+  background: #1a626c;
+}
+
+#startParkour:disabled {
+  opacity: 0.68;
+}
+
+.parkour-create-link {
+  display: inline-grid;
+  place-items: center;
+  justify-self: start;
+  min-height: 48px;
+  text-decoration: none;
+}
+
+.parkour-start-status {
+  margin: 0;
+  padding: 7px 10px;
+  border-left: 3px solid #a45c2b;
+  color: #65351e;
+  background: #fff0d6;
+  font-weight: 700;
+}
+
+.parkour-controls {
+  grid-area: levels;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: end;
+  gap: 6px 12px;
+  min-width: 0;
+}
+
+.parkour-controls span {
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: #154743;
+  background: #def5ec;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.has-parkour #levelPicker,
+.has-parkour #preparedSessionControls,
+.parkour-controls[hidden],
+.parkour-start-choices [hidden],
+.parkour-quit-reward[hidden] {
+  display: none;
+}
+
+.parkour-quit-reward {
+  position: absolute;
+  z-index: 4;
+  top: calc(8px + max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px)));
+  left: calc(8px + max(env(safe-area-inset-left, 0px), var(--safe-area-inset-left, 0px)));
+}
+
+.parkour-video-error .reward-video {
+  visibility: hidden;
+}
+
+.parkour-finish #parkourHome {
+  justify-self: center;
+}
+
+.space-bonus[data-parkour-bonus] .space-bonus-bar {
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+}
+
+.space-bonus[data-parkour-bonus] .parkour-abandon-bonus,
+.parkour-quit-reward {
+  color: #622b24;
+  border-color: #ad695b;
+  background: #fff2e9;
+}
+
+.parkour-editor-heading,
+.parkour-editor-actions,
+.parkour-editor-list li,
+.parkour-editor-list li > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.parkour-editor-heading,
+.parkour-editor-list li {
+  justify-content: space-between;
+}
+
+.parkour-editor-heading h2,
+.parkour-editor-actions p {
+  margin: 0;
+}
+
+.parkour-editor-list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.parkour-editor-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #cbd8d4;
+}
+
+.parkour-editor-list small {
+  display: block;
+  margin-top: 3px;
+}
+
+.parkour-warning {
+  color: #854423;
+}
+
+.parkour-editor-form,
+#parkourBlocks,
+#parkourBlocks fieldset {
+  display: grid;
+  gap: 12px;
+}
+
+.parkour-editor-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.parkour-module-row {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
+  gap: 10px;
+}
+
+.parkour-editor-form label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  font-weight: 800;
+}
+
+.parkour-editor-form input,
+.parkour-editor-form select {
+  min-width: 0;
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 9px;
+  border: 1px solid #778a93;
+  border-radius: 6px;
+  color: #25314f;
+  background: #fff;
+  font: inherit;
+}
+
+#parkourBlocks fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 10px 12px 12px;
+  border: 1px solid #b4c7c0;
+  border-radius: 8px;
+}
+
+#parkourBlocks legend {
+  padding-inline: 5px;
+  font-weight: 900;
+}
+
+.parkour-editor-form button,
+.parkour-editor-heading button,
+.parkour-editor-list button {
+  min-height: 48px;
+}
+
+@media (max-width: 560px) {
+  .parkour-editor-fields,
+  .parkour-module-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .space-bonus[data-parkour-bonus] .space-bonus-bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .space-bonus[data-parkour-bonus] .space-bonus-bar #spaceBonusQuit {
+    grid-area: 2 / 1;
+  }
+
+  .space-bonus[data-parkour-bonus] .space-bonus-bar .parkour-abandon-bonus {
+    grid-area: 2 / 2;
+  }
+
+  .space-bonus[data-parkour-bonus] .space-bonus-bar p {
+    grid-area: 1 / 2;
+  }
+}
+
+@media (max-height: 520px) {
+  .start-overlay .start-content {
+    gap: 7px;
+  }
+
+  .start-overlay .start-content input {
+    min-height: 54px;
+    font-size: 24px;
+  }
+}

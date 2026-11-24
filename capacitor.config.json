@@ -1,0 +1,9 @@
+{
+  "appId": "fr.syllabestoon.app",
+  "appName": "SyllabesToon",
+  "webDir": "dist/android-web",
+  "server": {
+    "hostname": "localhost",
+    "androidScheme": "https"
+  }
+}

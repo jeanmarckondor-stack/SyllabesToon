@@ -1,0 +1,50 @@
+[data-bonus="golf"] .space-bonus-bar,
+[data-bonus="golf"] .space-bonus-controls {
+  color: #213d35;
+  border-color: #a9c5b6;
+  background: #f5f9ef;
+}
+
+[data-bonus="golf"] .space-bonus-bar p {
+  justify-self: start;
+  padding: 5px 12px;
+  border: 1px solid #87ae9a;
+  border-radius: 6px;
+  color: #234d42;
+  background: #ddf1dc;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-bonus="golf"] .space-bonus-arena {
+  background: #d6eec8;
+}
+
+.funny-golf-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+[data-bonus="golf"] #funnyGolfHit {
+  width: min(100%, 340px);
+  min-height: 68px;
+  color: #483425;
+  border-color: #a26a32;
+  background: #ffdc80;
+  box-shadow: inset 0 -4px 0 #dbad58;
+}
+
+[data-bonus="golf"] #funnyGolfHit:disabled {
+  color: #344b41;
+  border-color: #9db6a9;
+  background: #dce9dd;
+  box-shadow: none;
+  opacity: 1;
+}
+
+[data-bonus="golf"] #funnyGolfHit:focus-visible {
+  outline: 2px solid #226553;
+  outline-offset: 2px;
+}

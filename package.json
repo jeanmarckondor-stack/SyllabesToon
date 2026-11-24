@@ -1,0 +1,16 @@
+{
+  "name": "syllabestoon",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare:android": "node scripts/prepare-android.js",
+    "sync:android": "npm run prepare:android && cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.2",
+    "@capacitor/core": "8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.2"
+  }
+}

@@ -13,6 +13,7 @@ const state = {
   studentName: "toi",
   started: false,
   consecutiveSuccesses: 0,
+  roundHadMistake: false,
   recentRewardVideos: [],
   targetHistoryByLevel: {},
   targetQueuesByLevel: {},
@@ -145,6 +146,7 @@ function createRound() {
   state.goal = level.targets;
   state.found = 0;
   state.mistakes = 0;
+  state.roundHadMistake = false;
   state.completed = false;
 
   targetSyllable.textContent = level.showTarget ? state.target : "?";
@@ -272,8 +274,9 @@ function handleCardClick(button) {
   }
 
   button.classList.add("soft-miss");
-  if (!state.mistakes) {
+  if (!state.roundHadMistake) {
     state.consecutiveSuccesses = 0;
+    state.roundHadMistake = true;
   }
   feedbackText.textContent = sample(config.gentleHelps);
   animateMascot("help");
@@ -312,7 +315,7 @@ function maybeShowHint() {
 
 function completeRound() {
   state.completed = true;
-  state.consecutiveSuccesses = state.mistakes ? 0 : state.consecutiveSuccesses + 1;
+  state.consecutiveSuccesses = state.roundHadMistake ? 0 : state.consecutiveSuccesses + 1;
   recordCompletedRound();
   feedbackText.textContent = `${state.studentName}, ${formatMessage(sample(config.completionMessages)).toLowerCase()}`;
   showRewardBadge();
@@ -330,8 +333,11 @@ function shouldShowMajorReward() {
 
 function maybeShowMajorReward() {
   const shouldShow = shouldShowMajorReward();
-  console.info("[syllabestoon] consecutive successes", state.consecutiveSuccesses);
-  console.info("[syllabestoon] should show major reward", shouldShow);
+  console.log("reward gate", {
+    roundHadMistake: state.roundHadMistake,
+    consecutiveSuccesses: state.consecutiveSuccesses,
+    shouldShowMajorReward: shouldShow,
+  });
 
   if (shouldShow) {
     showMajorReward();
@@ -377,6 +383,14 @@ function showRewardBadge() {
 }
 
 async function showMajorReward() {
+  if (!shouldShowMajorReward()) {
+    console.warn("[syllabestoon] blocked major reward outside reward gate", {
+      roundHadMistake: state.roundHadMistake,
+      consecutiveSuccesses: state.consecutiveSuccesses,
+    });
+    return;
+  }
+
   const levelIndex = state.levelIndex;
   const [rewards, sounds] = await Promise.all([
     getRewardsForLevel(levelIndex),
@@ -397,6 +411,10 @@ async function showMajorReward() {
     levelIndex,
     file: reward.file || reward.video,
     source: reward.source || "unknown",
+  });
+  console.log("MAJOR REWARD SHOWN", {
+    consecutiveSuccesses: state.consecutiveSuccesses,
+    file: reward.file || reward.video,
   });
   rewardAnimation.className = `reward-animation ${reward.className}`;
   rewardAnimation.innerHTML = "";

@@ -1,5 +1,7 @@
 (() => {
   const config = window.SYLLABESTOON_CONFIG;
+  const preparedSession = window.SyllabesToonPreparedSession;
+  const parkours = window.SyllabesToonParkour;
   const teacherPin = "1234";
   const accessStorageKey = "syllabestoon.teacherAccess.v1";
   const minActiveSyllables = 3;
@@ -7,8 +9,11 @@
   const storeName = "syllableAudio";
   const rewardVideoLevelsStorageKey = "syllabestoon.rewardVideoLevels.v1";
   let managerInitialized = false;
+  let refreshParkourEditor;
   const state = {
     tab: "add",
+    preparedSelection: new Set(),
+    preparedLevel: null,
     manageFilter: "all",
     recordFilter: "all",
     recordIndex: 0,
@@ -53,6 +58,12 @@
     importVoicesFile: document.querySelector("#importTeacherVoicesFile"),
     tabs: Array.from(document.querySelectorAll("[data-tab]")),
     panels: Array.from(document.querySelectorAll("[data-panel]")),
+    prepareTitle: document.querySelector("#prepareSessionTitle"),
+    prepareSyllables: document.querySelector("#prepareSessionSyllables"),
+    prepareCount: document.querySelector("#prepareSessionCount"),
+    prepareStatus: document.querySelector("#prepareSessionStatus"),
+    prepareLevel: document.querySelector("#prepareSessionLevel"),
+    prepareLaunch: document.querySelector("#launchPreparedSession"),
     newSyllable: document.querySelector("#managerNewSyllable"),
     addButton: document.querySelector("#managerAddSyllable"),
     addRecordSyllable: document.querySelector("#addRecordSyllable"),
@@ -81,6 +92,12 @@
     recordDelete: document.querySelector("#recordDelete"),
     rewardVideos: document.querySelector("#rewardVideoList"),
     rewardSounds: document.querySelector("#rewardSoundList"),
+    galleryOpen: document.querySelector("#openRewardGallery"),
+    galleryClose: document.querySelector("#closeRewardGallery"),
+    gallery: document.querySelector("#rewardGallery"),
+    galleryList: document.querySelector("#rewardGalleryList"),
+    gallerySelection: document.querySelector("#rewardGallerySelection"),
+    galleryVideo: document.querySelector("#rewardGalleryVideo"),
     guidedToggle: null,
     recordSkip: null,
   };
@@ -173,13 +190,19 @@
   }
 
   async function initializeManager() {
+    const current = preparedSession.read();
+    state.preparedSelection = new Set(current?.syllables);
+    state.preparedLevel = current?.levelIndex ?? null;
     bindEvents();
+    refreshParkourEditor = bindParkourEditor(document.querySelector("#teacherTabParkours"));
+    if (window.location.hash === "#parkours") selectTab("parkours");
     await refreshState();
     renderAll();
   }
 
   function bindEvents() {
     setupRecordGuidedControls();
+    bindBonusGallery();
 
     elements.dashboardActivateSyllables.addEventListener("click", openInactiveSyllables);
     elements.dashboardRecordMissingVoices.addEventListener("click", openMissingVoices);
@@ -193,6 +216,23 @@
     elements.tabs.forEach((button) => {
       button.addEventListener("click", () => selectTab(button.dataset.tab));
     });
+    elements.prepareSyllables.addEventListener("change", updatePreparedSelection);
+    elements.prepareLevel.addEventListener("change", () => {
+      state.preparedLevel = Number(elements.prepareLevel.value);
+    });
+    elements.prepareLaunch.addEventListener("click", launchPreparedSession);
+    elements.galleryOpen.addEventListener("click", openRewardGallery);
+    elements.galleryClose.addEventListener("click", () => {
+      stopGalleryVideo();
+      elements.gallery.close();
+    });
+    elements.gallery.addEventListener("close", stopGalleryVideo);
+    elements.galleryVideo.addEventListener("error", () => {
+      if (elements.gallery.open && elements.galleryVideo.hasAttribute("src")) {
+        elements.gallerySelection.textContent = "Cette vidéo ne peut pas être lue.";
+      }
+    });
+    window.addEventListener("pagehide", stopGalleryVideo);
 
     elements.addButton.addEventListener("click", addSyllableAndRecord);
     elements.newSyllable.addEventListener("keydown", (event) => {
@@ -284,6 +324,8 @@
 
   function renderAll() {
     renderDashboard();
+    if (state.tab === "prepare") renderPreparedSyllables();
+    if (state.tab === "parkours") refreshParkourEditor();
     renderAdd();
     renderLevelHelp();
     renderManage();
@@ -318,7 +360,79 @@
     state.tab = tab;
     elements.tabs.forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
     elements.panels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === tab));
+    if (tab === "prepare") {
+      renderPreparedSyllables();
+      elements.prepareTitle.focus();
+    }
+    if (tab === "parkours") {
+      refreshParkourEditor();
+      document.querySelector("#parkourEditorTitle").focus();
+    }
     renderRecord();
+  }
+
+  function renderPreparedSyllables() {
+    const active = config.getSyllables()
+      .filter((entry) => entry.active)
+      .sort((first, second) => first.text.localeCompare(second.text, "fr"));
+    const activeTexts = new Set(active.map((entry) => entry.text));
+    state.preparedSelection = new Set([...state.preparedSelection].filter((text) => activeTexts.has(text)));
+
+    elements.prepareSyllables.replaceChildren(...active.map((entry) => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = entry.text;
+      checkbox.checked = state.preparedSelection.has(entry.text);
+      const text = document.createElement("span");
+      text.textContent = entry.text;
+      const levels = document.createElement("small");
+      levels.textContent = entry.levelIndexes.map((index) => `N${index + 1}`).join(", ");
+      label.append(checkbox, text, levels);
+      return label;
+    }));
+    renderPreparedOptions(active);
+  }
+
+  function updatePreparedSelection(event) {
+    const checkbox = event.target;
+    if (checkbox.type !== "checkbox") return;
+    if (checkbox.checked) state.preparedSelection.add(checkbox.value);
+    else state.preparedSelection.delete(checkbox.value);
+    renderPreparedOptions();
+  }
+
+  function renderPreparedOptions(entries = config.getSyllables()) {
+    const selected = state.preparedSelection.size;
+    const active = entries.filter((entry) => entry.active).length;
+    const available = preparedSession.getLevels(state.preparedSelection, entries);
+    const playable = available.flatMap((level, index) => level.playable ? [index] : []);
+    const ready = playable.length > 0;
+    elements.prepareCount.textContent = `${selected} / ${active} syllabes sélectionnées`;
+    elements.prepareStatus.textContent = !active ? "Aucune syllabe active."
+      : !selected ? "" : !ready ? "Aucun niveau compatible. Cochez davantage de syllabes d’un même niveau."
+      : `Niveaux jouables : ${playable.map((index) => index + 1).join(", ")}.`;
+    elements.prepareLevel.replaceChildren(...(ready
+      ? playable.map((index) => new Option(config.levels[index].name, index))
+      : [new Option("Aucun niveau compatible", "")]));
+    if (!playable.includes(state.preparedLevel)) state.preparedLevel = playable[0] ?? null;
+    if (ready) elements.prepareLevel.value = String(state.preparedLevel);
+    elements.prepareLevel.disabled = !ready;
+    elements.prepareLaunch.disabled = !ready;
+  }
+
+  function launchPreparedSession() {
+    try {
+      if (!preparedSession.start(state.preparedSelection, state.preparedLevel)) {
+        renderPreparedSyllables();
+        return;
+      }
+    } catch {
+      elements.prepareStatus.textContent = "Impossible de conserver la sélection pour cette séance.";
+      return;
+    }
+    clearTeacherAuthorization();
+    window.location.href = "index.html";
   }
 
   function openInactiveSyllables() {
@@ -340,6 +454,13 @@
   }
 
   function exportTeacherConfig() {
+    let definitions;
+    try {
+      definitions = parkours.list();
+    } catch {
+      showMessage("Export impossible : les Parkours enregistrés ne peuvent pas être lus.");
+      return;
+    }
     const payload = {
       exportVersion: 1,
       exportedAt: new Date().toISOString(),
@@ -347,6 +468,7 @@
       activeRewardVideos: [...getActiveRewardFiles("video")],
       rewardVideoLevels: readRewardVideoLevelMap(),
       activeRewardSounds: [...getActiveRewardFiles("sound")],
+      parkours: definitions,
     };
     downloadJson("syllabestoon-config.json", payload);
     showMessage("Export réussi.");
@@ -377,7 +499,13 @@
     if (!payload || typeof payload !== "object" || payload.exportVersion !== 1) {
       throw new Error("Invalid export version.");
     }
-    if (!Array.isArray(payload.syllables)) {
+    if (!Array.isArray(payload.syllables) || payload.syllables.some((item) => {
+      const text = typeof item === "string" ? item : item?.text;
+      return typeof text !== "string" || !text.trim() || /\s/.test(text.trim())
+        || (item?.active !== undefined && typeof item.active !== "boolean")
+        || (item?.levelIndexes !== undefined && (!Array.isArray(item.levelIndexes)
+          || item.levelIndexes.some((index) => !Number.isInteger(index) || index < 0)));
+    })) {
       throw new Error("Invalid syllables.");
     }
 
@@ -386,11 +514,12 @@
       activeRewardVideos: validateStringArray(payload.activeRewardVideos),
       rewardVideoLevels: validateRewardVideoLevels(payload.rewardVideoLevels),
       activeRewardSounds: validateStringArray(payload.activeRewardSounds),
+      parkours: Object.prototype.hasOwnProperty.call(payload, "parkours") ? parkours.validate(payload.parkours) : undefined,
     };
   }
 
   function validateStringArray(value) {
-    if (!Array.isArray(value)) {
+    if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
       throw new Error("Invalid file list.");
     }
 
@@ -404,6 +533,9 @@
 
     return Object.fromEntries(Object.entries(value)
       .map(([file, levelIndexes]) => {
+        if (!Array.isArray(levelIndexes) || levelIndexes.some((index) => !Number.isInteger(index) || index < 0)) {
+          throw new Error("Invalid video levels.");
+        }
         const sanitizedIndexes = sanitizeLevelIndexes(levelIndexes);
         return file && sanitizedIndexes.length ? [file, sanitizedIndexes] : null;
       })
@@ -415,6 +547,7 @@
     config.setActiveRewardVideos(nextConfig.activeRewardVideos);
     config.setActiveRewardSounds(nextConfig.activeRewardSounds);
     window.localStorage.setItem(rewardVideoLevelsStorageKey, JSON.stringify(nextConfig.rewardVideoLevels));
+    if (nextConfig.parkours !== undefined) parkours.replace(nextConfig.parkours);
   }
 
   async function exportTeacherVoices() {
@@ -556,6 +689,71 @@
       kind: "sound",
       emptyText: "Aucun son trouvé.",
     });
+  }
+
+  function bindBonusGallery() {
+    const gallery = document.querySelector("#bonusGallery");
+    const list = document.querySelector("#bonusGalleryList");
+    const open = document.querySelector("#openBonusGallery");
+    const bonuses = window.SyllabesToonBonusGames;
+    for (const { id, title } of bonuses.catalog) {
+      const row = document.createElement("li");
+      const name = document.createElement("strong");
+      name.textContent = title;
+      const button = document.createElement("button");
+      button.className = "audio-test-button";
+      button.type = "button";
+      button.textContent = "Essayer";
+      button.setAttribute("aria-label", `Essayer : ${title}`);
+      button.addEventListener("click", () => {
+        if (gallery.open && hasTeacherAccess()) bonuses.preview(id, button);
+      });
+      row.append(name, button);
+      list.append(row);
+    }
+    open.addEventListener("click", () => {
+      if (hasTeacherAccess() && state.tab === "rewards" && !gallery.open) gallery.showModal();
+    });
+    gallery.querySelector("header button").addEventListener("click", () => gallery.close());
+    gallery.addEventListener("close", () => open.focus({ preventScroll: true }));
+  }
+
+  async function openRewardGallery() {
+    const files = state.rewardVideos.length ? state.rewardVideos : await loadRewardFiles("video");
+    if (elements.gallery.open || state.tab !== "rewards") return;
+
+    const entries = files.map(({ file }) => {
+      const name = file.split("/").pop();
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = name;
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => playGalleryVideo(file, name, button));
+      return button;
+    });
+    elements.galleryList.replaceChildren(...entries);
+    elements.gallerySelection.textContent = entries.length ? "Aucune vidéo sélectionnée." : "Aucune vidéo trouvée.";
+    elements.gallery.showModal();
+  }
+
+  function playGalleryVideo(file, name, button) {
+    stopGalleryVideo();
+    const path = file.startsWith("assets/") ? file : `assets/videos/${file}`;
+    button.setAttribute("aria-pressed", "true");
+    elements.gallerySelection.textContent = name;
+    elements.galleryVideo.src = path.split("/").map(encodeURIComponent).join("/");
+    elements.galleryVideo.play().catch(() => {});
+  }
+
+  function stopGalleryVideo() {
+    const video = elements.galleryVideo;
+    if (video.hasAttribute("src")) {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    }
+    elements.galleryList.querySelector('[aria-pressed="true"]')?.setAttribute("aria-pressed", "false");
+    elements.gallerySelection.textContent = "";
   }
 
   function renderRewardList({ container, files, activeFiles, kind, emptyText }) {

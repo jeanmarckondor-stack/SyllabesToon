@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SyllabesToon</title>
     <link rel="stylesheet" href="src/styles.css">
+    <link rel="stylesheet" href="src/space-bonus.css">
+    <link rel="stylesheet" href="src/candy-maze.css">
+    <link rel="stylesheet" href="src/turbo-bike.css">
+    <link rel="stylesheet" href="src/funny-golf.css">
+    <link rel="stylesheet" href="src/parkour.css">
   </head>
   <body class="theme-candy">
     <main class="app-shell">
@@ -21,9 +26,20 @@
         </div>
 
         <header class="top-bar">
-          <div>
+          <div class="game-heading">
             <p class="kicker">SyllabesToon</p>
-            <h1>Le nuage des syllabes</h1>
+            <div class="game-title-line">
+              <h1>Le nuage des syllabes</h1>
+              <span class="reward-progress-stars" data-reward-progress role="img" aria-label="Progression vers la récompense : 0 étoile sur 5">
+                <span class="reward-progress-star"></span><span class="reward-progress-star"></span>
+                <span class="reward-progress-star"></span><span class="reward-progress-star"></span>
+                <span class="reward-progress-star"></span>
+              </span>
+            </div>
+            <div id="preparedSessionControls" class="prepared-session-controls" hidden>
+              <span>Séance préparée</span>
+              <button id="endPreparedSession" class="prepared-session-end" type="button">Terminer la séance</button>
+            </div>
           </div>
           <div class="toolbar">
             <div class="style-picker" aria-label="Choisir le style visuel">
@@ -34,6 +50,10 @@
               <a class="style-button teacher-link" href="teacher-manager.html">Espace enseignant</a>
             </div>
             <div id="levelPicker" class="level-picker" aria-label="Choisir un niveau"></div>
+            <div id="parkourControls" class="parkour-controls" hidden>
+              <span id="parkourPosition" role="status"></span>
+              <button id="parkourQuit" class="prepared-session-end" type="button">Quitter le Parkour</button>
+            </div>
             <p id="levelName" class="level-name">Niveau 1 - Découverte</p>
           </div>
         </header>
@@ -78,9 +98,16 @@
             <div class="start-content">
               <p class="kicker">Bienvenue</p>
               <h2>Qui joue aujourd'hui ?</h2>
+              <p id="preparedSessionStartStatus" class="prepared-session-start-status" role="status" hidden></p>
               <label for="studentName">Prénom de l'élève</label>
               <input id="studentName" type="text" autocomplete="off" maxlength="24" placeholder="Prénom">
-              <button id="startGame" class="start-button" type="button">Commencer</button>
+              <div class="parkour-start-choices">
+                <button id="startGame" class="start-button" type="button">Mode libre</button>
+                <button id="startParkour" class="start-button" type="button">Mode Parkour</button>
+              </div>
+              <p id="parkourStartStatus" class="parkour-start-status" role="status" hidden></p>
+              <button id="endPreparedSessionBeforeStart" class="prepared-session-end" type="button" hidden>Terminer la séance</button>
+              <a class="style-button parkour-create-link" href="teacher-manager.html#parkours">Créer un Parkour</a>
             </div>
           </div>
         </section>
@@ -103,19 +130,42 @@
         <section id="rewardOverlay" class="reward-overlay hidden" aria-label="Récompense gagnée">
           <div class="reward-scene">
             <button id="closeReward" class="panel-icon-button reward-close" type="button" aria-label="Fermer la récompense">×</button>
-            <img class="reward-capsule" src="assets/images/reward-capsule.png" alt="" aria-hidden="true">
+            <button id="parkourQuitReward" class="space-bonus-secondary parkour-quit-reward" type="button" hidden>Quitter le Parkour</button>
+            <div class="reward-decoration" aria-hidden="true">
+              <span class="reward-progress-stars reward-completion-mark">
+                <span class="reward-progress-star is-earned"></span><span class="reward-progress-star is-earned"></span>
+                <span class="reward-progress-star is-earned"></span><span class="reward-progress-star is-earned"></span>
+                <span class="reward-progress-star is-earned"></span>
+              </span>
+              <img class="reward-capsule" src="assets/images/reward-capsule.png" alt="">
+            </div>
             <div id="rewardAnimation" class="reward-animation" aria-hidden="true"></div>
-            <p id="rewardTitle" class="reward-title">Une surprise !</p>
-            <p id="rewardMessage" class="reward-message">Regarde ce qui arrive !</p>
+            <div class="reward-caption">
+              <p id="rewardTitle" class="reward-title">Une surprise !</p>
+              <p id="rewardMessage" class="reward-message">Regarde ce qui arrive !</p>
+            </div>
             <button id="continueReward" class="start-button reward-continue" type="button">Continuer</button>
           </div>
         </section>
       </section>
     </main>
+    <dialog id="parkourFinish" class="space-bonus parkour-finish" aria-labelledby="parkourFinishTitle">
+      <div class="space-bonus-offer">
+        <h2 id="parkourFinishTitle">Bravo, Parkour terminé !</h2>
+        <button id="parkourHome" class="space-bonus-primary" type="button">Retour à l’accueil</button>
+      </div>
+    </dialog>
 
     <script src="src/config.js"></script>
+    <script src="src/prepared-session.js"></script>
+    <script src="src/parkour.js"></script>
     <script src="src/audio.js"></script>
     <script src="src/storage.js"></script>
+    <script src="src/space-bonus.js"></script>
+    <script src="src/candy-maze.js"></script>
+    <script src="src/turbo-bike.js"></script>
+    <script src="src/funny-golf.js"></script>
+    <script src="src/bonus-games.js"></script>
     <script src="src/app.js"></script>
   </body>
 </html>
