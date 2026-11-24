@@ -1,0 +1,81 @@
+.space-bonus-game[data-bonus="fishing"] {
+  color: #f1fff8;
+  background: #153e56;
+}
+
+[data-bonus="fishing"] .space-bonus-bar,
+[data-bonus="fishing"] .space-bonus-controls {
+  border-color: #488695;
+  background: #17475d;
+}
+
+[data-bonus="fishing"] #spaceBonusProgress {
+  justify-self: start;
+  padding: 5px 10px;
+  border: 1px solid #75aaa8;
+  border-radius: 6px;
+  color: #fff0ae;
+  background: #163b54;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+[data-bonus="fishing"] #spaceBonusQuit,
+[data-bonus="fishing"] .fishing-bonus-sound {
+  border-color: #9edbcd;
+  color: #f2fff8;
+  background: #24546a;
+}
+
+[data-bonus="fishing"] .space-bonus-arena {
+  cursor: default;
+  background: #57cdd0;
+}
+
+.fishing-bonus-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.fishing-bonus-canvas.is-aiming { cursor: grabbing; }
+
+[data-bonus="fishing"] .space-bonus-controls { place-items: center end; }
+
+[data-bonus="fishing"] .fishing-bonus-sound {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-width: 108px;
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.fishing-bonus-sound svg { width: 19px; height: 19px; }
+.fishing-bonus-sound[aria-pressed="false"] { color: #c5dcdf; border-style: dashed; }
+.fishing-bonus-sound[aria-pressed="true"] { color: #203c50; background: #ffdf9b; }
+
+[data-bonus="fishing"] .space-bonus-finish {
+  border: 2px solid #ffe0a0;
+  color: #173c54;
+  background: #fff7d8;
+  box-shadow: 0 8px 22px #193a5c6b;
+}
+
+[data-bonus="fishing"] .space-bonus-win-star { color: #c16937; }
+
+@media (max-width: 440px) {
+  [data-bonus="fishing"] .space-bonus-bar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 137px);
+    column-gap: 8px;
+  }
+  [data-bonus="fishing"] #spaceBonusQuit { padding-inline: 8px; font-size: 14px; }
+  [data-bonus="fishing"] .parkour-abandon-bonus:not([hidden]) { grid-area: 3 / 1 / 4 / -1; }
+}

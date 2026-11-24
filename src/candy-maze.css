@@ -1,121 +1,94 @@
 [data-bonus="maze"] {
-  color: #f5f7ff;
-  background: #060917;
+  color: #fcf9ff;
+  background: #040610;
 }
 
 [data-bonus="maze"] .space-bonus-bar {
-  border-color: #324b9a;
-  background: #10162f;
+  border-color: #294778;
+  background: #0c142d;
 }
 
 [data-bonus="maze"] #spaceBonusProgress {
   justify-self: start;
   padding: 5px 10px;
-  border: 1px solid #4d61a6;
+  border: 1px solid #4566a6;
   border-radius: 6px;
-  background: #080c21;
-  color: #ffe978;
+  background: #080d20;
+  color: #ffdc6e;
   font-size: 16px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 [data-bonus="maze"] #spaceBonusQuit {
   color: #f5f7ff;
-  border-color: #7394f9;
-  background: #212e58;
+  border-color: #719ef3;
+  background: #1c2c53;
 }
 
 [data-bonus="maze"] .space-bonus-arena {
   container-type: size;
-  padding: 12px 14px;
-  background: #060917;
+  padding: 14px;
+  background: #040610;
   cursor: default;
-  touch-action: auto;
 }
 
 .candy-maze-board {
   grid-area: 1 / 1;
   position: relative;
-  display: grid;
-  grid-template: repeat(var(--rows), 1fr) / repeat(var(--columns), 1fr);
-  width: min(100cqw, 140cqh, 1120px);
+  width: min(100cqw, 144.4cqh, 1120px);
   aspect-ratio: var(--columns) / var(--rows);
   overflow: hidden;
   border-radius: 8px;
-  background: #0a1022;
-  outline: 2px solid #648dff;
-  box-shadow: inset 0 0 0 4px #192958, inset 0 0 0 5px #314b9e, 0 0 13px #3565ed50;
+  background: radial-gradient(ellipse at 50% 43%, #10172b, #070912 75%);
+  outline: 2px solid #5d95ff;
+  box-shadow: inset 0 0 0 4px #12214a, 0 0 14px #3062ad61;
 }
 
-.candy-maze-path {
-  display: grid;
-  place-items: center;
-}
-
-.candy-maze-path:not(:nth-child(5n))::after {
-  content: "";
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #e4ca94;
-}
-
-.candy-maze-wall {
-  position: relative;
-  margin: 9%;
-  border: 2px solid #75a6ff;
-  border-radius: 13px;
-  background: #101e4a;
-  box-shadow: 0 0 9px #457aff43;
-}
-
-.candy-maze-wall::after {
-  content: "";
+.candy-maze-walls {
   position: absolute;
-  inset: 4px;
-  border: 1px solid #3e6ef5;
-  border-radius: 7px;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.candy-maze-wall.joins-left,
-.candy-maze-wall.joins-left::after {
-  border-left: 0;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.candy-maze-wall.joins-right,
-.candy-maze-wall.joins-right::after {
-  border-right: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.candy-maze-wall.joins-left { margin-left: 0; clip-path: inset(-9px -9px -9px 0); }
-.candy-maze-wall.joins-left::after { left: 0; }
-.candy-maze-wall.joins-right { margin-right: 0; clip-path: inset(-9px 0 -9px -9px); }
-.candy-maze-wall.joins-right::after { right: 0; }
-
-.candy-maze-sprite {
+.candy-maze-sprite,
+.candy-maze-pellet {
   position: absolute;
   left: calc(100% / var(--columns) * (var(--x) + 0.5));
   top: calc(100% / var(--rows) * (var(--y) + 0.5));
-  width: calc(82% / var(--columns));
-  aspect-ratio: 1;
   translate: -50% -50%;
-  transition: left 120ms ease-out, top 120ms ease-out;
+  aspect-ratio: 1;
   pointer-events: none;
+}
+
+.candy-maze-pellet {
+  width: clamp(6px, 2.15%, 17px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #fffde6, #ffdb7c 52%, #dda052 100%);
+  box-shadow: 0 0 8px #ffc87580;
+}
+
+.candy-maze-pellet.is-eaten {
+  animation: candy-maze-pellet-pop 260ms ease-out both;
+}
+
+.candy-maze-sprite {
+  left: 0;
+  top: 0;
+  width: calc(85% / var(--columns));
+  translate: calc((var(--x) + 0.5) * 100% / 0.85 - 50%) calc((var(--y) + 0.5) * 100% / 0.85 - 50%);
 }
 
 .candy-maze-sprite svg {
   display: block;
   width: 100%;
-  filter: drop-shadow(0 3px 2px #0008);
+  filter: drop-shadow(0 2px 1px #0008);
 }
 
 .candy-maze-player {
-  z-index: 1;
-  width: calc(95% / var(--columns));
+  z-index: 2;
 }
 
 .candy-maze-mouth,
@@ -124,72 +97,72 @@
   transform-origin: center;
 }
 
-.candy-maze-mouth {
-  transform: rotate(var(--maze-facing, 0deg));
+.candy-maze-mouth { transform: rotate(var(--maze-facing, 0deg)); }
+.candy-maze-bite { transform: scaleY(0.36); }
+
+.candy-maze-player[data-facing="left"] .candy-maze-cheek { transform: translateX(22px); }
+.candy-maze-player[data-facing="up"] .candy-maze-eye { transform: translate(-12px, 6px); }
+.candy-maze-player[data-facing="up"] .candy-maze-cheek { transform: translateY(4px); }
+
+.candy-maze-ghost {
+  z-index: 1;
 }
 
-.candy-maze-bite {
-  transform: scaleY(0.32);
+.candy-maze-pink {
+  --ghost-fill: #ff64a3;
+  --ghost-edge: #fda6c9;
+  --ghost-shade: #c64478;
+  --ghost-glint: #ffc5de;
 }
 
-.candy-maze-player[data-facing="left"] .candy-maze-cheek {
-  transform: translateX(22px);
+.candy-maze-cyan {
+  --ghost-fill: #40dceb;
+  --ghost-edge: #8ffcfa;
+  --ghost-shade: #1c9dbb;
+  --ghost-glint: #c3faff;
 }
 
-.candy-maze-player[data-facing="up"] .candy-maze-eye {
-  transform: translate(-12px, 6px);
+.candy-maze-ghost svg {
+  animation: candy-maze-float 810ms ease-in-out infinite alternate;
 }
 
-.candy-maze-player[data-facing="up"] .candy-maze-cheek {
-  transform: translateY(4px);
+.candy-maze-cyan svg { animation-delay: -380ms; }
+
+.candy-maze-pupils {
+  transform: translate(var(--look-x, 0px), var(--look-y, 0px));
+  transition: transform 100ms linear;
 }
 
-.candy-maze-sweet {
-  transition-duration: 180ms;
+[data-bonus="maze"] .space-bonus-finish {
+  border: 2px solid #71a5ff;
+  background: #17254b;
+  color: #fff1bc;
+  box-shadow: 0 0 24px #2d61b773;
 }
 
-.candy-maze-berry {
-  --candy-wrapper: #e64f99;
-  --candy-fill: #ff84c6;
-  --candy-glint: #ffc7e6;
+[data-bonus="maze"] .space-bonus-win-star {
+  color: #ffd16e;
+  animation: candy-maze-victory 540ms ease-out both;
 }
 
-.candy-maze-mint {
-  --candy-wrapper: #159ba9;
-  --candy-fill: #5deff3;
-  --candy-glint: #d5fff9;
+@keyframes candy-maze-float {
+  from { transform: translateY(1px) scaleX(1.025); }
+  to { transform: translateY(-2px) scaleX(0.975); }
 }
 
-.candy-maze-sweet.is-caught {
-  z-index: 2;
-  animation: candy-maze-caught 360ms ease-out both;
+@keyframes candy-maze-pellet-pop {
+  30% { transform: scale(1.6); box-shadow: 0 0 12px #ffe38d; }
+  to { transform: scale(0.45); opacity: 0; }
 }
 
-.candy-maze-sweet.is-caught::after {
-  content: "\2726";
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: #fff2b9;
-  font-size: 32px;
-  text-shadow: -15px -10px 0 var(--candy-fill), 16px 9px 0 var(--candy-fill);
-  animation: candy-maze-spark 360ms ease-out both;
-}
-
-@keyframes candy-maze-caught {
-  30% { transform: scale(1.12) rotate(-10deg); }
-  to { transform: scale(0.75) rotate(12deg); opacity: 0; }
-}
-
-@keyframes candy-maze-spark {
-  from { transform: scale(0.5); }
-  to { transform: scale(1.5); }
+@keyframes candy-maze-victory {
+  35% { transform: scale(1.32) rotate(-12deg); }
+  to { transform: scale(1) rotate(0); }
 }
 
 [data-bonus="maze"] .space-bonus-controls {
-  border-color: #324b9a;
-  background: #10162f;
+  border-color: #294778;
+  background: #0c142d;
 }
 
 .candy-maze-pad {
@@ -197,23 +170,27 @@
   display: grid;
   grid-template-columns: repeat(3, var(--maze-key-width));
   gap: 8px;
+  touch-action: none;
+  user-select: none;
 }
 
 .candy-maze-pad button {
   width: var(--maze-key-width);
   height: 64px;
   padding: 0;
-  border-color: #7e9cff;
-  color: #ffec87;
-  background: #263967;
-  box-shadow: inset 0 -4px 0 #101a38;
-  font-size: 29px;
+  border-color: #84a8ff;
+  color: #ffe682;
+  background: #23335d;
+  box-shadow: inset 0 -4px 0 #10192e;
+  font-size: 30px;
+  touch-action: none;
 }
 
+.candy-maze-pad button.is-held,
 .candy-maze-pad button:active:not(:disabled) {
-  color: #19142b;
-  background: #ffec87;
-  box-shadow: inset 0 -4px 0 #e6b84f;
+  color: #241a28;
+  background: #ffe484;
+  box-shadow: inset 0 -4px 0 #d4ab4c;
 }
 
 .candy-maze-pad button:focus-visible,
@@ -227,24 +204,28 @@
 .candy-maze-pad [data-direction="ArrowDown"] { grid-area: 2 / 2; }
 .candy-maze-pad [data-direction="ArrowRight"] { grid-area: 2 / 3; }
 
+.candy-maze-board.is-caught .candy-maze-ghost svg { animation-play-state: paused; }
+.candy-maze-board.is-resetting .candy-maze-ghost svg,
+.candy-maze-board.is-idle .candy-maze-ghost svg { animation: none; }
+.candy-maze-board.is-idle .candy-maze-pellet.is-eaten { animation: none; opacity: 0; }
+
 @media (orientation: landscape) and (min-width: 580px) {
   .space-bonus-game[data-bonus="maze"] {
     grid-template: auto minmax(0, 1fr) / minmax(0, 1fr) auto;
   }
 
-  [data-bonus="maze"] .space-bonus-bar {
-    grid-column: 1 / -1;
-  }
+  [data-bonus="maze"] .space-bonus-bar { grid-column: 1 / -1; }
 
   [data-bonus="maze"] .space-bonus-controls {
     padding: 12px 16px;
     border-top: 0;
-    border-left: 1px solid #324b9a;
+    border-left: 1px solid #294778;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .candy-maze-sprite { transition: none; }
-  .candy-maze-sweet.is-caught { animation: none; opacity: 0; }
-  .candy-maze-sweet.is-caught::after { animation: none; }
+  .candy-maze-pupils { transition: none; }
+  .candy-maze-ghost svg,
+  [data-bonus="maze"] .space-bonus-win-star { animation: none; }
+  .candy-maze-pellet.is-eaten { animation: none; opacity: 0; }
 }

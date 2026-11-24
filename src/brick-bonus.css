@@ -1,0 +1,80 @@
+.space-bonus-game[data-bonus="bricks"] {
+  color: #fbfff2;
+  background: #283653;
+}
+
+[data-bonus="bricks"] .space-bonus-bar,
+[data-bonus="bricks"] .space-bonus-controls {
+  border-color: #72929e;
+  background: #273c55;
+}
+
+[data-bonus="bricks"] #spaceBonusProgress {
+  justify-self: start;
+  padding: 5px 10px;
+  border: 1px solid #80b4b6;
+  border-radius: 6px;
+  color: #fff0a9;
+  background: #23334e;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+[data-bonus="bricks"] #spaceBonusQuit,
+[data-bonus="bricks"] .brick-bonus-music {
+  border-color: #9cdece;
+  color: #f3fff4;
+  background: #315265;
+}
+
+[data-bonus="bricks"] .space-bonus-arena { background: #293750; }
+[data-bonus="bricks"] .space-bonus-controls { place-items: center end; }
+
+.brick-bonus-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  user-select: none;
+  cursor: ew-resize;
+}
+
+.brick-bonus-canvas:focus-visible {
+  outline: 2px solid #fff3b9;
+  outline-offset: -3px;
+}
+
+[data-bonus="bricks"] .brick-bonus-music {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-width: 138px;
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.brick-bonus-music svg { width: 19px; height: 19px; }
+.brick-bonus-music[aria-pressed="false"] { color: #cedde3; border-style: dashed; }
+
+[data-bonus="bricks"] .space-bonus-finish {
+  border: 2px solid #ffdf94;
+  color: #fff4c1;
+  background: #533e73;
+  box-shadow: 0 8px 20px #19284079;
+}
+
+[data-bonus="bricks"] .space-bonus-win-star { color: #ffd68a; }
+
+@media (max-width: 440px) {
+  [data-bonus="bricks"] .space-bonus-bar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 137px);
+    column-gap: 8px;
+  }
+  [data-bonus="bricks"] #spaceBonusQuit { padding-inline: 8px; font-size: 14px; }
+  [data-bonus="bricks"] .parkour-abandon-bonus:not([hidden]) { grid-area: 3 / 1 / 4 / -1; }
+}

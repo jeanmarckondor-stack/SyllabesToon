@@ -4,6 +4,9 @@ window.SyllabesToonBonusGames = (() => {
     { id: "maze", title: "Labyrinthe des bonbons", start: startCandyMaze },
     { id: "bike", title: "Vélo Turbo Toon", start: startTurboBike },
     { id: "golf", title: "Mini-golf farfelu", start: startFunnyGolf },
+    { id: "bowling", title: "Bowling des monstres", start: startMonsterBowling },
+    { id: "fishing", title: "P\u00eache aux poissons rigolos", start: startFishingBonus },
+    { id: "bricks", title: "Casse-briques Toon", start: startBrickBonus },
   ];
   const catalog = games.map(({ id, title }) => ({ id, title }));
   const dialog = document.createElement("dialog");
